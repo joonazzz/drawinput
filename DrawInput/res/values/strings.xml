@@ -3,5 +3,10 @@
     
     <string name="label_subtype_generic">%s</string>
     <string name="label_subtype_en_GB">English (GB)</string>
+    <string name="special_chars">*</string>
+    <string name="button_small_abc_text">abc</string>
+    <string name="button_big_abc_text">ABC</string>
+    <string name="button_123_text">123</string>
+    <string name="button_special_chars_text">*</string>
     
 </resources>

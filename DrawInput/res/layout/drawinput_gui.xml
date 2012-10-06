@@ -22,7 +22,7 @@
                 android:layout_marginTop="@dimen/button_margin"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
-                android:text="test" />
+                android:text="@string/button_small_abc_text" />
 
             <Button
                 android:layout_width="fill_parent"
@@ -32,7 +32,7 @@
                 android:layout_marginTop="@dimen/button_margin"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
-                android:text="test" />
+                android:text="@string/button_big_abc_text" />
 
             <Button
                 android:layout_width="fill_parent"
@@ -42,7 +42,7 @@
                 android:layout_marginTop="@dimen/button_margin"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
-                android:text="test" />
+                android:text="@string/button_123_text" />
 
             <Button
                 android:layout_width="fill_parent"
@@ -54,7 +54,7 @@
                 android:layout_marginRight="@dimen/button_margin"
                 android:layout_marginBottom="@dimen/button_margin"
                 
-                android:text="test" />
+                android:text="@string/button_special_chars_text" />
         </LinearLayout>
 
         <SurfaceView

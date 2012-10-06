@@ -25,6 +25,7 @@ public class DrawInputMethodService extends InputMethodService {
 		mContainerView = (View) getLayoutInflater().inflate(
 				R.layout.drawinput_gui, null);
 
+		
 		return mContainerView;
 
 	}
