@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+
+    <dimen name="button_margin">2dp</dimen>
+    <dimen name="col_width">60dp</dimen></resources>
