@@ -1,5 +1,65 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppTheme" parent="android:Theme.Light" />
+    <style name="AppTheme" parent="android:Theme.Black" >
+    </style>
+
+    <style name="button_style" parent="@android:style/Widget.Button">
+        <item name="android:textColor">@color/button_text_color</item>
+        <item name="android:background">@drawable/button_background</item>
+    </style>
+    
+    
+    <style name="vertical_button_group" parent="button_style">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_gravity">center_vertical|center_horizontal</item>
+        <item name="android:layout_weight">1.0</item>
+    </style>
+    
+    
+    <style name="horizontal_button_group" parent="button_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:layout_gravity">center_vertical|center_horizontal</item>
+        <item name="android:layout_weight">1.0</item>
+    </style>
+    
+	<style name="button_inputmode_style">
+        <item name="android:textColor">@color/button_inputmode_text_color</item>
+        <item name="android:background">@drawable/button_background</item>
+    </style>
+    
+    <style name="vertical_inputmode_button_group" parent="button_inputmode_style">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_gravity">center_vertical|center_horizontal</item>
+        <item name="android:layout_weight">1.0</item>
+    </style>
+    
+    
+    <!-- Right column buttons -->
+    
+    <style name="button_erase_style" parent="vertical_button_group">
+        <item name="android:background">@drawable/button_erase_background</item>
+    </style>
+    <style name="button_space_style" parent="vertical_button_group">
+        <item name="android:background">@drawable/button_space_background</item>
+    </style>
+    <style name="button_enter_style" parent="vertical_button_group">
+        <item name="android:background">@drawable/button_enter_background</item>
+    </style>
+    
+    
+    <!-- Bottom row buttons -->
+    
+    <style name="button_left_style" parent="horizontal_button_group">
+        <item name="android:background">@drawable/button_left_background</item>
+    </style>
+    <style name="button_clear_style" parent="horizontal_button_group">
+        <item name="android:background">@drawable/button_clear_background</item>
+    </style>
+    <style name="button_right_style" parent="horizontal_button_group">
+        <item name="android:background">@drawable/button_right_background</item>
+    </style>
 
 </resources>

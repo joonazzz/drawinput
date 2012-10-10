@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.jsillanpaa.drawinput"
     android:layout_width="fill_parent"
-    android:layout_height="250dp"
+    android:layout_height="245dp"
+    android:background="@color/drawinput_gui_background"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -9,59 +11,56 @@
         android:layout_height="200dp"
         android:orientation="horizontal" >
 
-        <LinearLayout
+        <RadioGroup
+            android:id="@+id/radiogroup_inputmode"
             android:layout_width="@dimen/col_width"
             android:layout_height="fill_parent"
             android:orientation="vertical" >
 
-            <Button
+            <com.jsillanpaa.drawinput.widgets.InputModeToggleButton
                 android:id="@+id/button_small_abc"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_weight="1.0"
-                android:layout_marginTop="@dimen/button_margin"
+                style="@style/vertical_inputmode_button_group"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
-                android:text="@string/button_small_abc_text" />
+                android:layout_marginTop="@dimen/button_margin"
+                android:onClick="onSmallAbcClicked"
+                android:textOff="@string/button_small_abc_text"
+                android:textOn="@string/button_small_abc_text" />
 
-            <Button
+            <com.jsillanpaa.drawinput.widgets.InputModeToggleButton
                 android:id="@+id/button_big_abc"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_weight="1.0"
-                android:layout_marginTop="@dimen/button_margin"
+                style="@style/vertical_inputmode_button_group"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
-                android:text="@string/button_big_abc_text" />
+                android:layout_marginTop="@dimen/button_margin"
+                android:enabled="false"
+                android:onClick="onBigAbcClicked"
+                android:textOff="@string/button_big_abc_text"
+                android:textOn="@string/button_big_abc_text" />
 
-            <Button
+            <com.jsillanpaa.drawinput.widgets.InputModeToggleButton
                 android:id="@+id/button_numbers"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_weight="1.0"
-                android:layout_marginTop="@dimen/button_margin"
+                style="@style/vertical_inputmode_button_group"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
-                android:text="@string/button_123_text" />
+                android:layout_marginTop="@dimen/button_margin"
+                android:onClick="onNumbersClicked"
+                android:textOff="@string/button_123_text"
+                android:textOn="@string/button_123_text" />
 
-            <Button
+            <com.jsillanpaa.drawinput.widgets.InputModeToggleButton
                 android:id="@+id/button_special_chars"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_weight="1.0"
-                android:layout_marginTop="@dimen/button_margin"
+                style="@style/vertical_inputmode_button_group"
+                android:layout_marginBottom="@dimen/button_margin"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
-                android:layout_marginBottom="@dimen/button_margin"
-                
-                android:text="@string/button_special_chars_text" />
-        </LinearLayout>
+                android:layout_marginTop="@dimen/button_margin"
+                android:onClick="onSpecialCharsClicked"
+                android:textOff="@string/button_special_chars_text"
+                android:textOn="@string/button_special_chars_text" />
+        </RadioGroup>
 
-        <SurfaceView
+        <com.jsillanpaa.drawinput.DrawInputCanvas
             android:id="@+id/canvas"
             android:layout_width="0dip"
             android:layout_height="fill_parent"
@@ -73,95 +72,86 @@
             android:layout_height="fill_parent"
             android:orientation="vertical" >
 
-                       <Button
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_weight="1.0"
-                android:layout_marginTop="@dimen/button_margin"
+            <Button
+                android:id="@+id/button_erase"
+                style="@style/button_erase_style"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
-                android:text="test" />
+                android:layout_marginTop="@dimen/button_margin"
+                android:onClick="onEraseClicked" />
 
             <Button
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_weight="1.0"
-                android:layout_marginTop="@dimen/button_margin"
+                android:id="@+id/button_space"
+                style="@style/button_space_style"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
-                android:text="test" />
+                android:layout_marginTop="@dimen/button_margin"
+                android:onClick="onSpaceClicked"
+                />
 
             <Button
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
+                android:id="@+id/button_enter"
+                style="@style/button_enter_style"
                 android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_weight="1.0"
-                android:layout_marginTop="@dimen/button_margin"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
-                android:text="test" />
+                android:layout_marginTop="@dimen/button_margin"
+                android:onClick="onEnterClicked"
+                />
 
             <Button
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_weight="1.0"
-                android:layout_marginTop="@dimen/button_margin"
-                android:layout_marginLeft="@dimen/button_margin"
-                android:layout_marginRight="@dimen/button_margin"
+                android:id="@+id/button_go"
+                style="@style/vertical_button_group"
                 android:layout_marginBottom="@dimen/button_margin"
-                
-                android:text="test" />
+                android:layout_marginLeft="@dimen/button_margin"
+                android:layout_marginRight="@dimen/button_margin"
+                android:layout_marginTop="@dimen/button_margin"
+                android:onClick="onGoClicked"
+                android:text="Go!" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:orientation="horizontal" >
 
         <Button
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_vertical|center_horizontal"
+            android:id="@+id/button_left"
+            style="@style/button_left_style"
             android:layout_marginBottom="@dimen/button_margin"
-            android:layout_marginTop="@dimen/button_margin"
             android:layout_marginLeft="@dimen/button_margin"
-            android:layout_weight="1.0"
-            android:text="test" />
+            android:layout_marginTop="@dimen/button_margin"
+            android:onClick="onLeftClicked"
+            />
 
         <Button
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:layout_weight="1.0"
+            android:id="@+id/button_clear"
+            style="@style/button_clear_style"
             android:layout_marginBottom="@dimen/button_margin"
-            android:layout_marginTop="@dimen/button_margin"
             android:layout_marginLeft="@dimen/button_margin"
-            android:text="test" />
+            android:layout_marginTop="@dimen/button_margin"
+            android:onClick="onClearClicked"
+            />
 
         <Button
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:layout_weight="1.0"
+            android:id="@+id/button_accept"
+            style="@style/horizontal_button_group"
             android:layout_marginBottom="@dimen/button_margin"
-            android:layout_marginTop="@dimen/button_margin"
             android:layout_marginLeft="@dimen/button_margin"
-            android:text="test" />
+            android:layout_marginTop="@dimen/button_margin"
+            android:onClick="onAcceptClicked"
+            android:text="--" />
 
         <Button
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:layout_weight="1.0"
+            android:id="@+id/button_right"
+            style="@style/button_right_style"
             android:layout_marginBottom="@dimen/button_margin"
-            android:layout_marginTop="@dimen/button_margin"
             android:layout_marginLeft="@dimen/button_margin"
             android:layout_marginRight="@dimen/button_margin"
-            android:text="test" />
+            android:layout_marginTop="@dimen/button_margin"
+            android:onClick="onRightClicked"
+            />
     </LinearLayout>
 
 </LinearLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="button_pressed_c1">#FF7321</color>
+    <color name="button_pressed_c2">#DE641D</color>
+    <color name="button_pressed_stroke_color">#DE641D</color>
+    
+    <color name="button_checked_c1">#827E82</color>
+    <color name="button_checked_c2">#636063</color>
+    <color name="button_checked_stroke_color">#E96A27</color>
+    
+    <color name="button_inputmode_loaded_stroke_color">#51C958</color>
+    <color name="button_inputmode_not_loaded_stroke_color">#6889DE</color>
+    
+    <color name="button_enabled_c1">#C6C7C6</color>
+    <color name="button_enabled_c2">#A7A8A7</color>
+    <color name="button_enabled_stroke_color">#222222</color>
+    
+    <color name="button_default_c1">#827E82</color>
+    <color name="button_default_c2">#636063</color>
+    <color name="button_default_stroke_color">#222222</color>
+    
+    <color name="button_text_enabled">#100010</color>
+    <color name="button_text_disabled">#CBCCCB</color>
+    
+    <color name="drawinput_gui_background">#535252</color>
+    
+    <color name="button_inputmode_text_selected">#FFB268</color>
+    <color name="button_inputmode_text_loaded">#509752</color>
+    <color name="button_inputmode_text_notloaded">#626EB0</color>
+    <color name="button_inputmode_text_disabled">#888888</color>
+    
+</resources>

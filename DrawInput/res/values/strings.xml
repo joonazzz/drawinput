@@ -9,4 +9,8 @@
     <string name="button_123_text">123</string>
     <string name="button_special_chars_text">*</string>
     
+    <string name="button_accept_nochar">--</string>
+    <string name="inputmode_loading">inputmode loading…</string>
+    
+    
 </resources>
