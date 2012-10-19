@@ -114,6 +114,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			case NUMBERS:
 				startTime = System.currentTimeMillis();
 				mNumberModel = loadModelFromResource(R.raw.rbf_svm_model_from_1a_15_samples);
+
 				Log.i(TAG, "PROFILE: loading number model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
