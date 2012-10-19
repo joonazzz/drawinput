@@ -22,8 +22,6 @@ import java.util.zip.GZIPOutputStream;
 import libsvm.svm;
 import libsvm.svm_model;
 
-import android.content.Context;
-
 public class HwrTools {
 
 
