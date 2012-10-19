@@ -3,14 +3,15 @@ package com.jsillanpaa.drawinput;
 import java.util.ArrayList;
 
 import android.inputmethodservice.InputMethodService;
-import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
 
+import com.jsillanpaa.drawinput.R;
 import com.jsillanpaa.drawinput.DrawInputCanvas.DrawInputCanvasListener;
 import com.jsillanpaa.drawinput.char_recognizers.CharRecognizer;
 import com.jsillanpaa.drawinput.char_recognizers.CharRecognizer.CharRecognitionResult;
@@ -40,16 +41,12 @@ public class DrawInputMethodService extends InputMethodService {
 
 	private ArrayList<InputModeToggleButton> mInputModeToggleButtons;
 	private ArrayList<InputModeToggleButton> mValidInputModeButtons;
-	private ArrayList<InputMode> mValidInputModes = new ArrayList<InputMode>(4);
+	private ArrayList<InputMode> mValidInputModes;
 
 	private CharRecognizer mCharRecognizer;
 	private CharRecognizerController mCharRecognizerController;
 	private DrawInputCanvas mCanvas;
 	private DrawInputCanvasController mCanvasController;
-
-	private InputMode mInputMode = null;
-
-	private boolean mInputViewCreated = false;
 
 	@Override
 	public void onCreate() {
@@ -61,26 +58,13 @@ public class DrawInputMethodService extends InputMethodService {
 
 	}
 
-	
 	@Override
 	public View onCreateInputView() {
 		Log.i(TAG, TAG + ".onCreateInputView()");
-		
-		/* Android calls this two times for some reason. Avoid
-		 * unnecessary creation with this flag. */
-//		if(!mInputViewCreated){
-			Log.i(TAG, "onCreateInputView(): mInputViewCreated = false, creating input view...");
-			mContainerView = getLayoutInflater().inflate(R.layout.drawinput_gui,
-					null);
-			initReferences(mContainerView);
-//			mInputViewCreated  = true;
-//		}
-//		else{
-//			Log.i(TAG, "onCreateInputView(): mInputViewCreated = true, just returning mContainerView...");
-//			mContainerView.getRootView().
-//		}
-		
-		
+
+		mContainerView = getLayoutInflater().inflate(R.layout.drawinput_gui,
+				null);
+		initReferences(mContainerView);
 		return mContainerView;
 
 	}
@@ -119,18 +103,28 @@ public class DrawInputMethodService extends InputMethodService {
 		mInputModeToggleButtons.add(mBigAbcButton);
 		mInputModeToggleButtons.add(mNumbersButton);
 		mInputModeToggleButtons.add(mSpecialCharsButton);
-		
-		/* Currently there is no XML attribute to set onLongClick().
-		 * It must be done in code. */
-		mEraseButton.setOnLongClickListener( new OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				return onEraseLongClick();
 
-			}
+	}
 
-		});
+	private void initInputMode(EditorInfo info) {
+		mValidInputModes = new ArrayList<InputMode>();
 		
+		switch (info.inputType & EditorInfo.TYPE_MASK_CLASS) {
+		case EditorInfo.TYPE_CLASS_TEXT:
+			mValidInputModes.add(InputMode.SMALL_LETTERS);
+			mValidInputModes.add(InputMode.BIG_LETTERS);
+			mValidInputModes.add(InputMode.NUMBERS);
+			setInputMode(InputMode.NUMBERS);
+
+			break;
+		case EditorInfo.TYPE_CLASS_DATETIME:
+		case EditorInfo.TYPE_CLASS_NUMBER:
+		case EditorInfo.TYPE_CLASS_PHONE:
+			mValidInputModes.add(InputMode.NUMBERS);
+			setInputMode(InputMode.NUMBERS);
+		default:
+			break;
+		}
 	}
 
 	private void initInputMode() {
@@ -144,54 +138,9 @@ public class DrawInputMethodService extends InputMethodService {
 
 	}
 
-	private void initInputMode(EditorInfo info) {
-		mValidInputModes.clear();
-		
-		switch (info.inputType & InputType.TYPE_MASK_CLASS ) {
-		case InputType.TYPE_CLASS_NUMBER:
-		case InputType.TYPE_CLASS_DATETIME:
-		case InputType.TYPE_CLASS_PHONE:
-			initNumberInputMode();
-			break;
-		case InputType.TYPE_CLASS_TEXT:
-			initTextInputMode();
-		default:
-			initTextInputMode();
-			break;
-		}
-		
-	}
-
-	private void initTextInputMode() {
-		Log.i(TAG, "initTextInputMode()");
-		mValidInputModes.add(InputMode.SMALL_LETTERS);
-		mValidInputModes.add(InputMode.BIG_LETTERS);
-		mValidInputModes.add(InputMode.NUMBERS);
-		mValidInputModes.add(InputMode.SPECIAL_CHARS);
-		setInputMode(InputMode.SMALL_LETTERS);
-	}
-
-	private void initNumberInputMode() {
-		Log.i(TAG, "initNumberInputMode()");
-		mValidInputModes.add(InputMode.NUMBERS);
-		mValidInputModes.add(InputMode.SPECIAL_CHARS);
-		setInputMode(InputMode.NUMBERS);
-	}
-
 	private void setInputMode(InputMode inputmode) {
-		Log.i(TAG, "setInputMode(), mode = " + inputmode);
-		
-		/* Android calls onStartInputView() twice. This causes two
-		 * calls to setInputMode(). This if is to avoid loading 
-		 * same inputmode twice in succession, which should improve
-		 * performance, because loading inputmode is expensive at
-		 * least for RbfSvmCharRecognizer.*/
-//		if(mInputMode == null || mInputMode != inputmode){
-			mInputMode = inputmode;
-			updateButtonGroup(inputmode);
-			mCharRecognizer.setInputMode(inputmode);	
-//		}
-		
+		updateButtonGroup(inputmode);
+		mCharRecognizer.setInputMode(inputmode);
 	}
 
 	private void updateButtonGroup(InputMode inputmode) {
@@ -242,15 +191,19 @@ public class DrawInputMethodService extends InputMethodService {
 		mRightButton.setEnabled(charsAfterCursor > 0);
 	}
 
+    /**
+     * This is the point where you can do all of your UI initialization.  It
+     * is called after creation and any configuration change.
+     */
+    @Override public void onInitializeInterface() {
+    	Log.i(TAG, TAG + ".onInitializeInterface()" );
+    	
+    }
 	@Override
 	public void onStartInputView(EditorInfo info, boolean restarting) {
-		// Looking at the traces: gets called twice by android system at the beginning!
 		Log.i(TAG, TAG + ".onStartInputView(), restarting = " + restarting);
 		super.onStartInputView(info, restarting);
-		
-		//initInputMode(info);
-		initInputMode();
-		int i=1;
+		initInputMode(info);
 	}
 
 	public void onSmallAbcClicked(View v) {
@@ -279,15 +232,7 @@ public class DrawInputMethodService extends InputMethodService {
 		removeChar();
 
 	}
-	private boolean onEraseLongClick() {
-		Log.i(TAG, "onEraseLongClick()");
-		InputConnection ic = getCurrentInputConnection();
-		ic.deleteSurroundingText(Integer.MAX_VALUE, 0);
-		cursorMove();
-		return true;
-	}
 
-	
 	public void onSpaceClicked(View v) {
 		Log.i(TAG, "onSpaceClicked()");
 
@@ -315,8 +260,6 @@ public class DrawInputMethodService extends InputMethodService {
 
 		mCanvas.clear();
 		mClearButton.setEnabled(false);
-		mAcceptButton.setEnabled(false);
-		mAcceptButton.setText(R.string.button_accept_nochar);
 	}
 
 	public void onAcceptClicked(View v) {
@@ -326,7 +269,6 @@ public class DrawInputMethodService extends InputMethodService {
 		mCanvas.clear();
 		mClearButton.setEnabled(false);
 		mAcceptButton.setText(R.string.button_accept_nochar);
-		mAcceptButton.setEnabled(false);
 	}
 
 	public void onRightClicked(View v) {
@@ -371,20 +313,19 @@ public class DrawInputMethodService extends InputMethodService {
 			Log.i(TAG,
 					"onRecognizedChar(), result.getChar() = "
 							+ result.getChar());
-			mAcceptButton.setEnabled(true);
 			mAcceptButton.setText("" + result.getChar());
 		}
 
 		@Override
 		public void onNewInputModeLoaded(InputMode mode) {
-			Log.i(TAG, "onNewInputModeLoaded(), mode = " + mode);
+			Log.i(TAG, "onNewInputModeLoaded()");
 			mCanvas.removeText();
 			getInputModeButton(mode).setStateLoaded(true);
 		}
 
 		@Override
 		public void onNewInputModeLoading(InputMode mode) {
-			Log.i(TAG, "onNewInputModeLoading(), mode = " + mode);
+			Log.i(TAG, "onNewInputModeLoading()");
 			mCanvas.showText(mode + " "
 					+ getResources().getString(R.string.inputmode_loading));
 		}

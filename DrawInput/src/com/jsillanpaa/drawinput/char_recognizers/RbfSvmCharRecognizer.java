@@ -107,8 +107,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 		}
 
 		private void loadInputMode(InputMode imode) {
-			Log.i(TAG, "loadInputMode(), mode = " + imode);
-			//HwrTools.listAssets(mContext);
+			Log.i(TAG, "loadInputMode, mode = " + imode);
 
 			long startTime;
 			switch (imode) {
@@ -131,9 +130,6 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			case SMALL_LETTERS:
 				startTime = System.currentTimeMillis();
 				mSmallLettersModel = loadModelFromResource(R.raw.rbf_svm_model_from_1c_30_samples);
-				//mSmallLettersModel = loadModelFromText(SMALL_LETTERS_MODEL_FILE
-				//		+ ".txt");
-				// loadScaler(SMALL_LETTERS_MODEL_FILE+"_scaler.bin");
 				Log.i(TAG, "PROFILE: loading small abc model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
@@ -174,6 +170,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 
 	}
 
+	@Override
 	public void setInputMode(InputMode input_mode) {
 		Log.i(TAG, "setInputMode(), mode = " + input_mode);
 		
