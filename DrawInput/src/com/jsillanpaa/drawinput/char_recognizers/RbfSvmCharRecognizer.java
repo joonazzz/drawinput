@@ -103,7 +103,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 
 		private void loadInputMode(InputMode imode) {
 			Log.i(TAG, "loadInputMode, mode = " + imode);
-			HwrTools.listAssets(mContext);
+			//HwrTools.listAssets(mContext);
 
 			long startTime;
 			switch (imode) {
@@ -113,8 +113,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				//mNumberModel = loadModelFromText(NUMBER_MODEL_FILE + ".txt");
 				//mNumberModel = loadModelFromRawText(R.raw);
 				// loadScaler(NUMBER_MODEL_FILE+"_scaler.bin");
-				System.out
-						.println("PROFILE: loading number model from text took: "
+				Log.i(TAG, "PROFILE: loading number model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
 				current_model = mNumberModel;
@@ -128,8 +127,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				// mBigLettersModel =
 				// loadModelFromText(BIG_LETTERS_MODEL_FILE+FILE_EXTENSION_DUMMY);
 				// loadScaler(BIG_LETTERS_MODEL_FILE+"_scaler.bin");
-				System.out
-						.println("PROFILE: loading BIG ABC model from text took: "
+				Log.i(TAG, "PROFILE: loading BIG ABC model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
 				current_model = mBigLettersModel;
@@ -140,8 +138,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				//mSmallLettersModel = loadModelFromText(SMALL_LETTERS_MODEL_FILE
 				//		+ ".txt");
 				// loadScaler(SMALL_LETTERS_MODEL_FILE+"_scaler.bin");
-				System.out
-						.println("PROFILE: loading small abc model from text took: "
+				Log.i(TAG, "PROFILE: loading small abc model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
 				current_model = mSmallLettersModel;

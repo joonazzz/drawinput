@@ -106,6 +106,27 @@ public class DrawInputMethodService extends InputMethodService {
 
 	}
 
+	private void initInputMode(EditorInfo info) {
+		mValidInputModes = new ArrayList<InputMode>();
+		
+		switch (info.inputType & EditorInfo.TYPE_MASK_CLASS) {
+		case EditorInfo.TYPE_CLASS_TEXT:
+			mValidInputModes.add(InputMode.SMALL_LETTERS);
+			mValidInputModes.add(InputMode.BIG_LETTERS);
+			mValidInputModes.add(InputMode.NUMBERS);
+			setInputMode(InputMode.NUMBERS);
+
+			break;
+		case EditorInfo.TYPE_CLASS_DATETIME:
+		case EditorInfo.TYPE_CLASS_NUMBER:
+		case EditorInfo.TYPE_CLASS_PHONE:
+			mValidInputModes.add(InputMode.NUMBERS);
+			setInputMode(InputMode.NUMBERS);
+		default:
+			break;
+		}
+	}
+
 	private void initInputMode() {
 		mValidInputModes = new ArrayList<InputMode>();
 		mValidInputModes.add(InputMode.SMALL_LETTERS);
@@ -170,11 +191,19 @@ public class DrawInputMethodService extends InputMethodService {
 		mRightButton.setEnabled(charsAfterCursor > 0);
 	}
 
+    /**
+     * This is the point where you can do all of your UI initialization.  It
+     * is called after creation and any configuration change.
+     */
+    @Override public void onInitializeInterface() {
+    	Log.i(TAG, TAG + ".onInitializeInterface()" );
+    	
+    }
 	@Override
 	public void onStartInputView(EditorInfo info, boolean restarting) {
 		Log.i(TAG, TAG + ".onStartInputView(), restarting = " + restarting);
 		super.onStartInputView(info, restarting);
-		initInputMode();
+		initInputMode(info);
 	}
 
 	public void onSmallAbcClicked(View v) {

@@ -65,7 +65,7 @@ public class DrawInputCanvas extends SurfaceView {
 	}
 
 	private void init() {
-		Log.i(TAG, "init(");
+		Log.i(TAG, "init()");
 		mListeners = new ArrayList<DrawInputCanvas.DrawInputCanvasListener>();
 		mCharBeingDrawn = new HwrCharacter('-');
 
