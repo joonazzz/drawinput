@@ -28,9 +28,10 @@ containing a value of this type.
         public static final int button_enabled_c1=0x7f060008;
         public static final int button_enabled_c2=0x7f060009;
         public static final int button_enabled_stroke_color=0x7f06000a;
+        public static final int button_inputmode_checked_border_color=0x7f060015;
         public static final int button_inputmode_loaded_stroke_color=0x7f060006;
         public static final int button_inputmode_not_loaded_stroke_color=0x7f060007;
-        public static final int button_inputmode_text_color=0x7f060015;
+        public static final int button_inputmode_text_color=0x7f060016;
         public static final int button_inputmode_text_disabled=0x7f060014;
         public static final int button_inputmode_text_loaded=0x7f060012;
         public static final int button_inputmode_text_notloaded=0x7f060013;
@@ -38,14 +39,14 @@ containing a value of this type.
         public static final int button_pressed_c1=0x7f060000;
         public static final int button_pressed_c2=0x7f060001;
         public static final int button_pressed_stroke_color=0x7f060002;
-        public static final int button_text_color=0x7f060016;
+        public static final int button_text_color=0x7f060017;
         public static final int button_text_disabled=0x7f06000f;
         public static final int button_text_enabled=0x7f06000e;
         public static final int drawinput_gui_background=0x7f060010;
     }
     public static final class dimen {
-        public static final int button_border_width=0x7f070002;
-        public static final int button_corner_radius=0x7f070003;
+        public static final int button_inputmode_border_width=0x7f070002;
+        public static final int button_inputmode_corner_radius=0x7f070003;
         public static final int button_margin=0x7f070000;
         public static final int col_width=0x7f070001;
     }
@@ -67,28 +68,27 @@ containing a value of this type.
         public static final int button_erase_default_layer=0x7f02000e;
         public static final int button_erase_disabled_layer=0x7f02000f;
         public static final int button_erase_pressed_layer=0x7f020010;
-        public static final int button_inputmode_loaded=0x7f020011;
-        public static final int button_left=0x7f020012;
-        public static final int button_left_background=0x7f020013;
-        public static final int button_left_default_layer=0x7f020014;
-        public static final int button_left_disabled_layer=0x7f020015;
-        public static final int button_left_pressed_layer=0x7f020016;
-        public static final int button_normal=0x7f020017;
-        public static final int button_pressed=0x7f020018;
-        public static final int button_right=0x7f020019;
-        public static final int button_right_background=0x7f02001a;
-        public static final int button_right_default_layer=0x7f02001b;
-        public static final int button_right_disabled_layer=0x7f02001c;
-        public static final int button_right_pressed_layer=0x7f02001d;
-        public static final int button_space=0x7f02001e;
-        public static final int button_space_background=0x7f02001f;
-        public static final int button_space_default_layer=0x7f020020;
-        public static final int button_space_disabled_layer=0x7f020021;
-        public static final int button_space_pressed_layer=0x7f020022;
-        public static final int ic_launcher=0x7f020023;
-        public static final int icon_en_gb=0x7f020024;
-        public static final int icon_en_us=0x7f020025;
-        public static final int icon_eraser=0x7f020026;
+        public static final int button_left=0x7f020011;
+        public static final int button_left_background=0x7f020012;
+        public static final int button_left_default_layer=0x7f020013;
+        public static final int button_left_disabled_layer=0x7f020014;
+        public static final int button_left_pressed_layer=0x7f020015;
+        public static final int button_normal=0x7f020016;
+        public static final int button_pressed=0x7f020017;
+        public static final int button_right=0x7f020018;
+        public static final int button_right_background=0x7f020019;
+        public static final int button_right_default_layer=0x7f02001a;
+        public static final int button_right_disabled_layer=0x7f02001b;
+        public static final int button_right_pressed_layer=0x7f02001c;
+        public static final int button_space=0x7f02001d;
+        public static final int button_space_background=0x7f02001e;
+        public static final int button_space_default_layer=0x7f02001f;
+        public static final int button_space_disabled_layer=0x7f020020;
+        public static final int button_space_pressed_layer=0x7f020021;
+        public static final int ic_launcher=0x7f020022;
+        public static final int icon_en_gb=0x7f020023;
+        public static final int icon_en_us=0x7f020024;
+        public static final int icon_eraser=0x7f020025;
     }
     public static final class id {
         public static final int button_accept=0x7f0a000c;

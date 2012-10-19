@@ -78,7 +78,10 @@
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
                 android:layout_marginTop="@dimen/button_margin"
-                android:onClick="onEraseClicked" />
+                android:enabled="false"
+                android:onClick="onEraseClicked" 
+                android:longClickable="true"
+                />
 
             <Button
                 android:id="@+id/button_space"
@@ -122,6 +125,7 @@
             android:layout_marginBottom="@dimen/button_margin"
             android:layout_marginLeft="@dimen/button_margin"
             android:layout_marginTop="@dimen/button_margin"
+            android:enabled="false"
             android:onClick="onLeftClicked"
             />
 
@@ -131,6 +135,7 @@
             android:layout_marginBottom="@dimen/button_margin"
             android:layout_marginLeft="@dimen/button_margin"
             android:layout_marginTop="@dimen/button_margin"
+            android:enabled="false"
             android:onClick="onClearClicked"
             />
 
@@ -141,7 +146,8 @@
             android:layout_marginLeft="@dimen/button_margin"
             android:layout_marginTop="@dimen/button_margin"
             android:onClick="onAcceptClicked"
-            android:text="--" />
+            android:enabled="false"
+            android:text="@string/button_accept_nochar" />
 
         <Button
             android:id="@+id/button_right"
@@ -150,6 +156,7 @@
             android:layout_marginLeft="@dimen/button_margin"
             android:layout_marginRight="@dimen/button_margin"
             android:layout_marginTop="@dimen/button_margin"
+            android:enabled="false"
             android:onClick="onRightClicked"
             />
     </LinearLayout>

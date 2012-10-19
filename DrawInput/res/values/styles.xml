@@ -27,6 +27,7 @@
 	<style name="button_inputmode_style">
         <item name="android:textColor">@color/button_inputmode_text_color</item>
         <item name="android:background">@drawable/button_background</item>
+        <item name="android:textStyle">bold</item>
     </style>
     
     <style name="vertical_inputmode_button_group" parent="button_inputmode_style">

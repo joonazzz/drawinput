@@ -35,6 +35,10 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 	private svm_model mSmallLettersModel;
 	private svm_model current_model;
 
+	//private InputMode mLoadingInputMode = null;
+
+	private AsyncTask<InputMode, Void, InputMode> mLoadingTask = null;
+
 	public RbfSvmCharRecognizer(Context context, CharRecognizerListener listener) {
 		super(context, listener);
 	}
@@ -89,6 +93,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 
 	private class LoadInputModeTask extends
 			AsyncTask<InputMode, Void, InputMode> {
+		private static final String TAG = "LoadInputModeTask";
 
 		/**
 		 * The system calls this to perform work in a worker thread and delivers
@@ -102,19 +107,15 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 		}
 
 		private void loadInputMode(InputMode imode) {
-			Log.i(TAG, "loadInputMode, mode = " + imode);
-			HwrTools.listAssets(mContext);
+			Log.i(TAG, "loadInputMode(), mode = " + imode);
+			//HwrTools.listAssets(mContext);
 
 			long startTime;
 			switch (imode) {
 			case NUMBERS:
 				startTime = System.currentTimeMillis();
 				mNumberModel = loadModelFromResource(R.raw.rbf_svm_model_from_1a_15_samples);
-				//mNumberModel = loadModelFromText(NUMBER_MODEL_FILE + ".txt");
-				//mNumberModel = loadModelFromRawText(R.raw);
-				// loadScaler(NUMBER_MODEL_FILE+"_scaler.bin");
-				System.out
-						.println("PROFILE: loading number model from text took: "
+				Log.i(TAG, "PROFILE: loading number model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
 				current_model = mNumberModel;
@@ -122,14 +123,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			case BIG_LETTERS:
 				startTime = System.currentTimeMillis();
 				mBigLettersModel = loadModelFromResource(R.raw.rbf_svm_model_from_1b_30_samples);
-				
-				//mBigLettersModel = loadModelFromText(BIG_LETTERS_MODEL_FILE
-				//		+ ".txt");
-				// mBigLettersModel =
-				// loadModelFromText(BIG_LETTERS_MODEL_FILE+FILE_EXTENSION_DUMMY);
-				// loadScaler(BIG_LETTERS_MODEL_FILE+"_scaler.bin");
-				System.out
-						.println("PROFILE: loading BIG ABC model from text took: "
+				Log.i(TAG, "PROFILE: loading BIG ABC model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
 				current_model = mBigLettersModel;
@@ -140,8 +134,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				//mSmallLettersModel = loadModelFromText(SMALL_LETTERS_MODEL_FILE
 				//		+ ".txt");
 				// loadScaler(SMALL_LETTERS_MODEL_FILE+"_scaler.bin");
-				System.out
-						.println("PROFILE: loading small abc model from text took: "
+				Log.i(TAG, "PROFILE: loading small abc model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
 				current_model = mSmallLettersModel;
@@ -168,20 +161,6 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			return retval;
 		}
 
-		//private svm_model loadModelFromRawText(String model_file) {
-//		private svm_model loadModelFromText(String model_file) {
-//			InputStream is;
-//			svm_model retval = null;
-//			try {
-//				is = mContext.getAssets().open(model_file);
-//				retval = HwrTools.loadModelFromSvmText(is);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//
-//			return retval;
-//
-//		}
 
 		/**
 		 * The system calls this to perform work in the UI thread and delivers
@@ -196,6 +175,8 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 	}
 
 	public void setInputMode(InputMode input_mode) {
+		Log.i(TAG, "setInputMode(), mode = " + input_mode);
+		
 		if (checkInputMode(input_mode) == 0) {
 			return;
 		}
@@ -219,6 +200,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 	}
 
 	private int checkInputMode(InputMode input_mode) {
+		Log.i(TAG, "checkInputMode(), mode = " + input_mode);
 		svm_model model = null;
 		switch (input_mode) {
 		case NUMBERS:
@@ -236,8 +218,17 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			break;
 		}
 		if (model == null) {
-			this.notifyNewInputModeLoading(input_mode);
-			new LoadInputModeTask().execute(input_mode);
+			Log.i(TAG, "checkInputMode(), model == null, loading it...");
+			//if( (mLoadingInputMode == null) || (mLoadingInputMode != input_mode)){
+				this.notifyNewInputModeLoading(input_mode);
+				//mLoadingInputMode = input_mode;
+				if(mLoadingTask != null){
+					Log.i(TAG, "checkInputMode(), there was previous loading task, canceling it...");
+					mLoadingTask.cancel(true);
+				}
+				mLoadingTask = new LoadInputModeTask().execute(input_mode);	
+			//}
+			
 			return 0;
 		}
 		return 1;

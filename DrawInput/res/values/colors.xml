@@ -29,4 +29,6 @@
     <color name="button_inputmode_text_notloaded">#626EB0</color>
     <color name="button_inputmode_text_disabled">#888888</color>
     
+    <color name="button_inputmode_checked_border_color">#DE641D</color>
+    
 </resources>

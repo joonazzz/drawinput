@@ -164,22 +164,22 @@ public class HwrTools {
 	}
 	
 	public static svm_model loadModelFromSvmText(InputStream is) throws IOException{
-		BufferedReader br = new BufferedReader( new InputStreamReader(is));
+		BufferedReader br = new BufferedReader( new InputStreamReader(is), 8192);
 		return svm.svm_load_model(br);
 	}
 
-	public static void listAssets(Context context) {
-		String[] files;
-		try {
-			files = context.getAssets().list("");
-			for (int i = 0; i < files.length; i++) {
-				System.out.println("Asset: " + files[i]);
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
+//	public static void listAssets(Context context) {
+//		String[] files;
+//		try {
+//			files = context.getAssets().list("");
+//			for (int i = 0; i < files.length; i++) {
+//				System.out.println("Asset: " + files[i]);
+//			}
+//
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//
+//	}
 
 }

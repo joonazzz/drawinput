@@ -3,6 +3,7 @@ package com.jsillanpaa.drawinput.char_recognizers;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.jsillanpaa.drawinput.hwr.HwrCharacter;
 import com.jsillanpaa.drawinput.hwr.InputMode;
@@ -74,6 +75,7 @@ public abstract class CharRecognizer {
 		}
 	}
 	protected void notifyNewInputModeLoading(InputMode mode) {
+	
 		for (CharRecognizerListener l : mListeners) {
 			l.onNewInputModeLoading(mode);
 		}
