@@ -166,18 +166,5 @@ public class HwrTools {
 		return svm.svm_load_model(br);
 	}
 
-//	public static void listAssets(Context context) {
-//		String[] files;
-//		try {
-//			files = context.getAssets().list("");
-//			for (int i = 0; i < files.length; i++) {
-//				System.out.println("Asset: " + files[i]);
-//			}
-//
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//
-//	}
 
 }

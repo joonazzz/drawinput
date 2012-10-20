@@ -8,6 +8,7 @@ import libsvm.svm_model;
 import libsvm.svm_node;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.test.IsolatedContext;
 import android.util.Log;
 
 import com.jsillanpaa.drawinput.hwr.HwrAlgorithms;
@@ -35,9 +36,10 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 	private svm_model mSmallLettersModel;
 	private svm_model current_model;
 
-	//private InputMode mLoadingInputMode = null;
+	private InputMode mLoadingInputMode = null;
 
 	private AsyncTask<InputMode, Void, InputMode> mLoadingTask = null;
+
 
 	public RbfSvmCharRecognizer(Context context, CharRecognizerListener listener) {
 		super(context, listener);
@@ -158,6 +160,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			return retval;
 		}
 
+		
 
 		/**
 		 * The system calls this to perform work in the UI thread and delivers
@@ -166,6 +169,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 		@Override
 		protected void onPostExecute(InputMode result) {
 			Log.i(TAG, "LoadInputModeTask.onPostExecute()");
+			mLoadingTask = null;
 			notifyNewInputModeLoaded(result);
 		}
 
@@ -216,16 +220,29 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			break;
 		}
 		if (model == null) {
-			Log.i(TAG, "checkInputMode(), model == null, loading it...");
-			//if( (mLoadingInputMode == null) || (mLoadingInputMode != input_mode)){
-				this.notifyNewInputModeLoading(input_mode);
-				//mLoadingInputMode = input_mode;
+			Log.i(TAG, "checkInputMode(), model == null, maybe loading it...");
+			
+			if( mInputMode == null){ // This was no previous inputmode
+				Log.i(TAG, "checkInputMode(), no previous inputmode, loading " + input_mode);
+				mInputMode = input_mode;
+				notifyNewInputModeLoading(input_mode);
+				mLoadingTask = new LoadInputModeTask().execute(input_mode);
+			}
+			else if(mInputMode != input_mode){ // There as previous inputmode which was different
+				Log.i(TAG, "checkInputMode(), previous inputmode was different, loading " + input_mode);
+				mInputMode = input_mode;	
+				notifyNewInputModeLoading(input_mode);
+				// If there was previous loading task, cancel it
 				if(mLoadingTask != null){
 					Log.i(TAG, "checkInputMode(), there was previous loading task, canceling it...");
 					mLoadingTask.cancel(true);
+					
 				}
-				mLoadingTask = new LoadInputModeTask().execute(input_mode);	
-			//}
+				mLoadingTask = new LoadInputModeTask().execute(input_mode);
+			}
+			else{ // There was previous inputmode which was same, no need to do anything
+				Log.i(TAG, "checkInputMode(), previous inputmode was same, no action");
+			}
 			
 			return 0;
 		}

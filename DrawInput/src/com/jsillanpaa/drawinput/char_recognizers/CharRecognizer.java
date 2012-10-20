@@ -40,7 +40,7 @@ public abstract class CharRecognizer {
 	}
 	
 	protected ArrayList<CharRecognizerListener> mListeners;
-	protected InputMode mInputMode;
+	protected InputMode mInputMode = null;
 	protected Context mContext;
 
 	public CharRecognizer(Context context, CharRecognizerListener l) {
