@@ -28,8 +28,10 @@ import com.jsillanpaa.drawinput.hwr.HwrStroke;
 public class DrawInputCanvas extends SurfaceView {
 	private static final String TAG = "DrawInputCanvas";
 	private static final float LINE_WIDTH = 3.0f;
+	private static final float END_POINT_RADIUS = 4.0f;
 	private static final float TEXT_FONTSIZE = 24;
 	private static final Typeface TEXT_TYPEFACE = Typeface.create("Serif", Typeface.ITALIC);
+
 
 
 	public interface DrawInputCanvasListener {
@@ -48,6 +50,8 @@ public class DrawInputCanvas extends SurfaceView {
 	private Paint mDotPaint;
 	private String mDisplayText;
 	private Paint mTextPaint;
+	private Paint mFirstPointPaint;
+	private Paint mLastPointPaint;
 
 	public DrawInputCanvas(Context context) {
 		super(context);
@@ -70,12 +74,22 @@ public class DrawInputCanvas extends SurfaceView {
 		mCharBeingDrawn = new HwrCharacter('-');
 
 		mLinePaint = new Paint();
-		mLinePaint.setColor(Color.GREEN);
+		mLinePaint.setColor(Color.WHITE);
 		mLinePaint.setStyle(Style.STROKE);
 		mLinePaint.setStrokeWidth(LINE_WIDTH);
 
 		mDotPaint = new Paint(mLinePaint);
 		mDotPaint.setStyle(Style.FILL);
+		
+		mFirstPointPaint = new Paint();
+		mFirstPointPaint.setColor(Color.GREEN);
+		mFirstPointPaint.setStyle(Style.FILL);
+		
+		
+		mLastPointPaint = new Paint();
+		mLastPointPaint.setColor(Color.RED);
+		mLastPointPaint.setStyle(Style.FILL);
+
 		
 		mTextPaint = new Paint();
 		mTextPaint.setColor(Color.GREEN);
@@ -104,6 +118,10 @@ public class DrawInputCanvas extends SurfaceView {
 	private void drawChar(Canvas canvas) {
 		canvas.drawColor(Color.BLACK);
 		for (HwrStroke stroke : mCharBeingDrawn.strokes) {
+			PointF first_p = stroke.points.get(0);
+			PointF last_p = stroke.points.get(stroke.points.size()-1);
+			
+			canvas.drawCircle(first_p.x, first_p.y, END_POINT_RADIUS, mFirstPointPaint);
 			for (int i = 1; i < stroke.points.size(); i++) {
 				PointF previous = stroke.points.get(i - 1);
 				PointF current = stroke.points.get(i);
@@ -111,6 +129,7 @@ public class DrawInputCanvas extends SurfaceView {
 						current.y, mLinePaint);
 
 			}
+			canvas.drawCircle(last_p.x, last_p.y, END_POINT_RADIUS, mLastPointPaint);
 		}
 	}
 
@@ -122,6 +141,10 @@ public class DrawInputCanvas extends SurfaceView {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent motionEvent) {
+
+
+		
+		
 
 		float event_x = motionEvent.getX();
 		float event_y = motionEvent.getY();
@@ -138,15 +161,24 @@ public class DrawInputCanvas extends SurfaceView {
 			invalidate();
 			break;
 		case MotionEvent.ACTION_MOVE:
-
-			/* Don't know if this check is necessary but lets do it anyways ? */
-			if (previous_x != event_x && previous_y != event_y) {
-				previous_x = event_x;
-				previous_y = event_y;
-
-				mStrokeBeingDrawn.points.add(new PointF(event_x, event_y));
-				invalidate();
-			}
+			// For efficiency, motion events with ACTION_MOVE may batch together
+			// multiple movement samples within a single object. The most current
+			// pointer coordinates are available using getX(int) and getY(int).
+			// Earlier coordinates within the batch are accessed using
+			// getHistoricalX(int, int) and getHistoricalY(int, int). The
+			// coordinates are "historical" only insofar as they are older than the
+			// current coordinates in the batch; however, they are still distinct
+			// from any other coordinates reported in prior motion events. To
+			// process all coordinates in the batch in time order, first consume the
+			// historical coordinates then consume the current coordinates.
+			//
+			// from: http://developer.android.com/reference/android/view/MotionEvent.html
+			
+			final int historySize = motionEvent.getHistorySize();
+			for (int h = 0; h < historySize	; h++) {
+				mStrokeBeingDrawn.points.add(new PointF(motionEvent.getHistoricalX(h), motionEvent.getHistoricalY(h)));
+			}	
+			invalidate();
 			break;
 
 		case MotionEvent.ACTION_UP:

@@ -1,17 +1,16 @@
 package com.jsillanpaa.drawinput;
 
+import java.io.CharConversionException;
 import java.util.ArrayList;
 
 import android.inputmethodservice.InputMethodService;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
 
-import com.jsillanpaa.drawinput.R;
 import com.jsillanpaa.drawinput.DrawInputCanvas.DrawInputCanvasListener;
 import com.jsillanpaa.drawinput.char_recognizers.CharRecognizer;
 import com.jsillanpaa.drawinput.char_recognizers.CharRecognizer.CharRecognitionResult;
@@ -104,6 +103,19 @@ public class DrawInputMethodService extends InputMethodService {
 		mInputModeToggleButtons.add(mNumbersButton);
 		mInputModeToggleButtons.add(mSpecialCharsButton);
 
+		/* There is no XML attribute for long key press. Have to attach
+		 * it in code. */
+		mEraseButton.setOnLongClickListener( new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				InputConnection ic = getCurrentInputConnection();
+				CharSequence charsBeforeCursor = ic.getTextBeforeCursor(Integer.MAX_VALUE, 0);
+				ic.deleteSurroundingText(charsBeforeCursor.length(), 0);
+				mEraseButton.setPressed(false); // weird that this has to be here
+				cursorMove();
+				return true;
+			}
+		});
 	}
 
 	private void initInputMode(EditorInfo info) {
@@ -114,6 +126,7 @@ public class DrawInputMethodService extends InputMethodService {
 			mValidInputModes.add(InputMode.SMALL_LETTERS);
 			mValidInputModes.add(InputMode.BIG_LETTERS);
 			mValidInputModes.add(InputMode.NUMBERS);
+			mValidInputModes.add(InputMode.SPECIAL_CHARS);
 			setInputMode(InputMode.NUMBERS);
 
 			break;
@@ -127,16 +140,6 @@ public class DrawInputMethodService extends InputMethodService {
 		}
 	}
 
-	private void initInputMode() {
-		mValidInputModes = new ArrayList<InputMode>();
-		mValidInputModes.add(InputMode.SMALL_LETTERS);
-		mValidInputModes.add(InputMode.BIG_LETTERS);
-		mValidInputModes.add(InputMode.NUMBERS);
-		// mValidInputModes.add(InputMode.SPECIAL_CHARS);
-		mSpecialCharsButton.setEnabled(false);
-		setInputMode(InputMode.NUMBERS);
-
-	}
 
 	private void setInputMode(InputMode inputmode) {
 		updateButtonGroup(inputmode);
@@ -260,6 +263,8 @@ public class DrawInputMethodService extends InputMethodService {
 
 		mCanvas.clear();
 		mClearButton.setEnabled(false);
+		mAcceptButton.setText(R.string.button_accept_nochar);
+		mAcceptButton.setEnabled(false);
 	}
 
 	public void onAcceptClicked(View v) {
@@ -269,6 +274,7 @@ public class DrawInputMethodService extends InputMethodService {
 		mCanvas.clear();
 		mClearButton.setEnabled(false);
 		mAcceptButton.setText(R.string.button_accept_nochar);
+		mAcceptButton.setEnabled(false);
 	}
 
 	public void onRightClicked(View v) {
@@ -314,6 +320,7 @@ public class DrawInputMethodService extends InputMethodService {
 					"onRecognizedChar(), result.getChar() = "
 							+ result.getChar());
 			mAcceptButton.setText("" + result.getChar());
+			mAcceptButton.setEnabled(true);
 		}
 
 		@Override

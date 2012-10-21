@@ -8,11 +8,11 @@ import libsvm.svm_model;
 import libsvm.svm_node;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.test.IsolatedContext;
 import android.util.Log;
 
 import com.jsillanpaa.drawinput.hwr.HwrAlgorithms;
 import com.jsillanpaa.drawinput.hwr.HwrCharacter;
+import com.jsillanpaa.drawinput.hwr.HwrStroke;
 import com.jsillanpaa.drawinput.hwr.HwrTools;
 import com.jsillanpaa.drawinput.hwr.InputMode;
 import com.jsillanpaa.drawinput.R;
@@ -20,23 +20,14 @@ import com.jsillanpaa.drawinput.R;
 public class RbfSvmCharRecognizer extends CharRecognizer {
 	private static final String TAG = "RbfSvmCharRecognizer";
 
-	private static final int N_SAMPLES_PER_LABEL_1a = 15;
-	private static final int N_SAMPLES_PER_LABEL_1b = 30;
-	private static final int N_SAMPLES_PER_LABEL_1c = 30;
-
-	private static final String NUMBER_MODEL_FILE = "rbf_svm_model_from_1a_"
-			+ N_SAMPLES_PER_LABEL_1a + "_samples";
-	private static final String BIG_LETTERS_MODEL_FILE = "rbf_svm_model_from_1b_"
-			+ N_SAMPLES_PER_LABEL_1b + "_samples";
-	private static final String SMALL_LETTERS_MODEL_FILE = "rbf_svm_model_from_1c_"
-			+ N_SAMPLES_PER_LABEL_1c + "_samples";
+	private static final int POINT_POINTS_MAX = 6;
+	private static final int COMMA_POINTS_MAX = 18;
 
 	private svm_model mNumberModel;
 	private svm_model mBigLettersModel;
 	private svm_model mSmallLettersModel;
+	private svm_model mSpecialCharsModel;
 	private svm_model current_model;
-
-	private InputMode mLoadingInputMode = null;
 
 	private AsyncTask<InputMode, Void, InputMode> mLoadingTask = null;
 
@@ -47,10 +38,101 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 
 	@Override
 	public void tryRecognition(HwrCharacter ch) {
+		if(current_model == mSpecialCharsModel){
+			if(trySmallSpecialCharRecognition(ch)){
+				return;
+			}
+		}
 		Log.i(TAG, "tryRecognition()");
 		HwrCharacter preprocessed_ch = HwrAlgorithms.preProcessChar(ch);
 		float[] feature_vec = HwrAlgorithms.extractFeatures(preprocessed_ch);
 		classify(feature_vec);
+	}
+
+	
+	private boolean trySmallSpecialCharRecognition(HwrCharacter ch) {
+		Log.i(TAG, "trySmallSpecialCharRecognition()");
+		int num_strokes = ch.strokes.size();
+		if(num_strokes==2){
+			Log.i(TAG, "trySmallSpecialCharRecognition(), num_strokes = 2");
+			HwrStroke upper = getUpperFromStrokes(ch.strokes.get(0), ch.strokes.get(1));
+			HwrStroke lower = getLowerFromStrokes(ch.strokes.get(0), ch.strokes.get(1));
+			
+			Log.i(TAG, "upper.y = " + upper.points.get(0).y);
+			Log.i(TAG, "lower.y = " + lower.points.get(0).y);
+			Log.i(TAG, "isPoint(lower) = " + isPoint(lower));
+			Log.i(TAG, "isPoint(upper) = " + isPoint(upper));
+			Log.i(TAG, "isComma(lower) = " + isComma(lower));
+			Log.i(TAG, "isComma(upper) = " + isComma(upper));
+			
+			
+			if(isPoint(lower) && isPoint(upper)){
+				notifyRecognizedChar(':');
+				return true;
+			}
+			else if(isPoint(upper) && isComma(lower)){
+				notifyRecognizedChar(';');
+				return true;
+			}
+		}
+		else if(num_strokes==1){
+			Log.i(TAG, "trySmallSpecialCharRecognition(), num_strokes = 1");
+			
+			if(isPoint(ch.strokes.get(0))){
+				notifyRecognizedChar('.');
+				return true;
+			}
+			else if(isComma(ch.strokes.get(0))){
+				notifyRecognizedChar(',');
+				return true;
+			}
+			
+		}
+		return false;
+	}
+
+	private HwrStroke getLowerFromStrokes(HwrStroke left,
+			HwrStroke right) {
+		// y grows down
+		if(left.points.get(0).y > right.points.get(0).y){
+			return left;
+		}
+		else{
+			return right;
+		}
+	}
+
+	private HwrStroke getUpperFromStrokes(HwrStroke left,
+			HwrStroke right) {
+		// y grows down
+		if(left.points.get(0).y <= right.points.get(0).y){
+			return left;
+		}
+		else{
+			return right;
+		}
+	}
+
+	private boolean isComma(HwrStroke hwrStroke) {
+		int num_points = hwrStroke.points.size();
+		if( POINT_POINTS_MAX < num_points && num_points <= COMMA_POINTS_MAX){
+			return true;
+		}
+		else{
+			return false;	
+		}
+		
+	}
+
+	private boolean isPoint(HwrStroke hwrStroke) {
+		int num_points = hwrStroke.points.size();
+		if( 0 < num_points && num_points <= POINT_POINTS_MAX){
+			return true;
+		}
+		else{
+			return false;	
+		}
+		
 	}
 
 	private void classify(float[] feature_vec) {
@@ -139,6 +221,12 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				current_model = mSmallLettersModel;
 				break;
 			case SPECIAL_CHARS:
+				startTime = System.currentTimeMillis();
+				mSpecialCharsModel = loadModelFromResource(R.raw.rbf_svm_model_from_1d_15_samples);
+				Log.i(TAG, "PROFILE: loading special chars model from text took: "
+								+ (System.currentTimeMillis() - startTime)
+								+ " ms");
+				current_model = mSpecialCharsModel;
 				break;
 			default:
 				break;
@@ -194,6 +282,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			current_model = mSmallLettersModel;
 			break;
 		case SPECIAL_CHARS:
+			current_model = mSpecialCharsModel;
 			break;
 		default:
 			break;
@@ -215,6 +304,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			model = mSmallLettersModel;
 			break;
 		case SPECIAL_CHARS:
+			model = mSpecialCharsModel;
 			break;
 		default:
 			break;
@@ -242,6 +332,16 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			}
 			else{ // There was previous inputmode which was same, no need to do anything
 				Log.i(TAG, "checkInputMode(), previous inputmode was same, no action");
+				// FIXME TODO: I should really check why
+//				android calls initialization twice. I think it is unnecessary and
+//				causes annoying code. In the first init() drawing surface is created
+//				and inputmode is loaded and drawing surface gets text "loading xxx inputmode"
+//				In second call, it is recreated with empy surface and here we dont
+//				start new loading, and thus drawing surface is left empty although
+//				we are really still loading input mode!
+				notifyNewInputModeLoading(input_mode);
+
+				
 			}
 			
 			return 0;

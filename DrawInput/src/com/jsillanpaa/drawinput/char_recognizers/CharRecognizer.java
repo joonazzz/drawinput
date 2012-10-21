@@ -61,6 +61,12 @@ public abstract class CharRecognizer {
 			l.onRecognizedChar(result);
 		}
 	}
+	protected void notifyRecognizedChar(char ch) {
+		CharRecognitionResult result = new CharRecognitionResult(ch);
+		for (CharRecognizerListener l : mListeners) {
+			l.onRecognizedChar(result);
+		}
+	}
 
 	protected void notifyNoResult() {
 		for (CharRecognizerListener l : mListeners) {
