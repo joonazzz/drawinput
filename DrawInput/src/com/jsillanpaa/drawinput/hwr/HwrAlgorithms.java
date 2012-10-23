@@ -5,7 +5,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import libsvm.svm;
+import libsvm.svm_model;
+import libsvm.svm_node;
 import android.graphics.PointF;
+import android.util.FloatMath;
+
+import com.jsillanpaa.drawinput.char_recognizers.CharRecognitionResult;
 
 
 //import com.joonas.sillanpaa.drawinput.MyUtils;
@@ -353,7 +359,7 @@ public class HwrAlgorithms {
 
 				}
 
-				r = (float) Math.sqrt(dx * dx + dy * dy);
+				r = FloatMath.sqrt(dx * dx + dy * dy);
 				// r = (float) FloatMath.sqrt(dx * dx + dy * dy);
 				feature_vec[i++] = cur_p.x;
 				feature_vec[i++] = cur_p.y;
@@ -417,7 +423,7 @@ public class HwrAlgorithms {
 			sum += (v1[i]-v2[i])*(v1[i]-v2[i]);
 		}
 		//return FloatMath.sqrt(sum);
-		return (float) Math.sqrt(sum);
+		return FloatMath.sqrt(sum);
 	}
 	
 	public static float getEuclideanDistanceNoSqrt(float[] v1, float[] v2) {
@@ -451,8 +457,19 @@ public class HwrAlgorithms {
 			std += (vec[i] - mean_value) * (vec[i] - mean_value);
 		}
 		std = std / (vec.length - 1);
-		std = (float) Math.sqrt(std);
+		std = FloatMath.sqrt(std);
 		return std;
 	}
 
+	public static CharRecognitionResult predict(float[] feature_vector, svm_model model) {
+		svm_node[] z = new svm_node[feature_vector.length];
+		for (int i = 0; i < feature_vector.length; i++) {
+			z[i] = new svm_node();
+			z[i].index = i + 1;
+			z[i].value = feature_vector[i];
+		}
+		double result = svm.svm_predict(model, z);
+		return new CharRecognitionResult((char) result, 1.0f);
+		
+	}
 }

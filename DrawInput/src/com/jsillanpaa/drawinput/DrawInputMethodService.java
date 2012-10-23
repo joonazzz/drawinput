@@ -1,6 +1,5 @@
 package com.jsillanpaa.drawinput;
 
-import java.io.CharConversionException;
 import java.util.ArrayList;
 
 import android.inputmethodservice.InputMethodService;
@@ -12,8 +11,8 @@ import android.view.inputmethod.InputConnection;
 import android.widget.Button;
 
 import com.jsillanpaa.drawinput.DrawInputCanvas.DrawInputCanvasListener;
+import com.jsillanpaa.drawinput.char_recognizers.CharRecognitionResult;
 import com.jsillanpaa.drawinput.char_recognizers.CharRecognizer;
-import com.jsillanpaa.drawinput.char_recognizers.CharRecognizer.CharRecognitionResult;
 import com.jsillanpaa.drawinput.char_recognizers.CharRecognizer.CharRecognizerListener;
 import com.jsillanpaa.drawinput.char_recognizers.RbfSvmCharRecognizer;
 import com.jsillanpaa.drawinput.hwr.InputMode;
@@ -303,6 +302,12 @@ public class DrawInputMethodService extends InputMethodService {
 		public void onSwipeRight(DrawInputCanvas canvas) {
 			// TODO Auto-generated method stub
 
+		}
+
+		@Override
+		public void onCanvasSizeChanged(int w, int h) {
+			mCharRecognizer.setCanvasWidth(w);
+			mCharRecognizer.setCanvasHeight(h);
 		}
 
 	}

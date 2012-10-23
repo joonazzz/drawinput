@@ -3,6 +3,8 @@ package com.jsillanpaa.drawinput.char_recognizers;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Rect;
+
 import com.jsillanpaa.drawinput.hwr.HwrCharacter;
 import com.jsillanpaa.drawinput.hwr.InputMode;
 
@@ -15,33 +17,12 @@ public abstract class CharRecognizer {
 		void onNewInputModeLoading(InputMode mode);
 	}
 
-	public class CharRecognitionResult{
-		private char mChar;
-		private double mConfidence;
-
-		public CharRecognitionResult() {
-			this('-', 0.0);
-		}
-		public CharRecognitionResult(char ch) {
-			this(ch, 0.0);
-		}
-		
-		public CharRecognitionResult(char ch, double confidence) {
-			mChar = ch;
-			mConfidence = confidence;
-		}
-		public char getChar() {
-			return mChar;
-		}
-		public double getConfidence() {
-			return mConfidence;
-		}
-		
-	}
-	
 	protected ArrayList<CharRecognizerListener> mListeners;
 	protected InputMode mInputMode = null;
 	protected Context mContext;
+
+	protected int mCanvasWidth;
+	protected int mCanvasHeight;
 
 	public CharRecognizer(Context context, CharRecognizerListener l) {
 		mContext = context;
@@ -57,9 +38,11 @@ public abstract class CharRecognizer {
 	public abstract void setInputMode(InputMode mode);
 	
 	protected void notifyRecognizedChar(CharRecognitionResult result) {
-		for (CharRecognizerListener l : mListeners) {
-			l.onRecognizedChar(result);
-		}
+		if(result != null){
+			for (CharRecognizerListener l : mListeners) {
+				l.onRecognizedChar(result);
+			}	
+		}	
 	}
 	protected void notifyRecognizedChar(char ch) {
 		CharRecognitionResult result = new CharRecognitionResult(ch);
@@ -83,6 +66,15 @@ public abstract class CharRecognizer {
 		for (CharRecognizerListener l : mListeners) {
 			l.onNewInputModeLoading(mode);
 		}
+	}
+
+
+	public void setCanvasWidth(int w) {
+		mCanvasWidth = w;
+	}
+
+	public void setCanvasHeight(int h) {
+		mCanvasHeight = h;
 	}
 	
 	

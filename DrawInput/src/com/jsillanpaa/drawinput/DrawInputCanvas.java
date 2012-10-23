@@ -28,6 +28,8 @@ import com.jsillanpaa.drawinput.hwr.HwrStroke;
 public class DrawInputCanvas extends SurfaceView {
 	private static final String TAG = "DrawInputCanvas";
 	private static final float LINE_WIDTH = 3.0f;
+	private static final float DRAWING_LINE_WIDTH = 1.0f;
+
 	private static final float END_POINT_RADIUS = 4.0f;
 	private static final float TEXT_FONTSIZE = 24;
 	private static final Typeface TEXT_TYPEFACE = Typeface.create("Serif", Typeface.ITALIC);
@@ -38,6 +40,7 @@ public class DrawInputCanvas extends SurfaceView {
 		public void onNewStroke(DrawInputCanvas canvas);
 		public void onSwipeLeft(DrawInputCanvas canvas);
 		public void onSwipeRight(DrawInputCanvas canvas);
+		public void onCanvasSizeChanged(int w, int h);
 	}
 
 	private float previous_x;
@@ -52,7 +55,9 @@ public class DrawInputCanvas extends SurfaceView {
 	private Paint mTextPaint;
 	private Paint mFirstPointPaint;
 	private Paint mLastPointPaint;
-
+	private Paint mUpperDrawingLinePaint;
+	private Paint mLowerDrawingLinePaint;
+	
 	public DrawInputCanvas(Context context) {
 		super(context);
 		init();
@@ -78,6 +83,14 @@ public class DrawInputCanvas extends SurfaceView {
 		mLinePaint.setStyle(Style.STROKE);
 		mLinePaint.setStrokeWidth(LINE_WIDTH);
 
+		mUpperDrawingLinePaint = new Paint();
+		mUpperDrawingLinePaint.setColor(Color.CYAN);
+		mUpperDrawingLinePaint.setStyle(Style.STROKE);
+		mUpperDrawingLinePaint.setStrokeWidth(DRAWING_LINE_WIDTH);
+		
+		mLowerDrawingLinePaint = new Paint(mUpperDrawingLinePaint);
+		mLowerDrawingLinePaint.setStrokeWidth(2*DRAWING_LINE_WIDTH);
+		
 		mDotPaint = new Paint(mLinePaint);
 		mDotPaint.setStyle(Style.FILL);
 		
@@ -102,7 +115,7 @@ public class DrawInputCanvas extends SurfaceView {
 
 	@Override
 	public void draw(Canvas canvas) {
-		Log.i(TAG, "onDraw()");
+		//Log.i(TAG, "onDraw()");
 		if (canvas != null) {
 			if(mDisplayText!=null){
 				drawText(canvas);
@@ -116,7 +129,12 @@ public class DrawInputCanvas extends SurfaceView {
 	}
 
 	private void drawChar(Canvas canvas) {
+		
 		canvas.drawColor(Color.BLACK);
+		
+		canvas.drawLine(0, 0.25f*getHeight(), getWidth(), 0.25f*getHeight(), mUpperDrawingLinePaint);
+		canvas.drawLine(0, 0.75f*getHeight(), getWidth(), 0.75f*getHeight(), mLowerDrawingLinePaint);
+		
 		for (HwrStroke stroke : mCharBeingDrawn.strokes) {
 			PointF first_p = stroke.points.get(0);
 			PointF last_p = stroke.points.get(stroke.points.size()-1);
@@ -140,11 +158,15 @@ public class DrawInputCanvas extends SurfaceView {
 	}
 
 	@Override
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
+		for (DrawInputCanvasListener l : mListeners) {
+			l.onCanvasSizeChanged(w,h);
+		}
+	}
+	
+	@Override
 	public boolean onTouchEvent(MotionEvent motionEvent) {
-
-
-		
-		
 
 		float event_x = motionEvent.getX();
 		float event_y = motionEvent.getY();
