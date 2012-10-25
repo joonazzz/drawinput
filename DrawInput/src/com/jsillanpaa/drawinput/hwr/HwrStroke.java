@@ -14,6 +14,9 @@ public class HwrStroke implements Serializable {
 
 	private RectF mRect;
 
+	private PointF mLeftMost;
+	private PointF mRightMost;
+
 	public HwrStroke() {
 		points = new ArrayList<PointF>();
 	}
@@ -76,6 +79,28 @@ public class HwrStroke implements Serializable {
 			mean += p.y;
 		}
 		return mean / points.size();
+	}
+
+	public PointF getLeftMost() {
+		if(mLeftMost == null){
+			for (PointF p : points) {
+				if(mLeftMost == null || p.x < mLeftMost.x){
+					mLeftMost = p;
+				}
+			}
+		}
+
+		return mLeftMost;
+	}
+	public PointF getRightMost() {
+		if(mRightMost == null){
+			for (PointF p : points) {
+				if(mRightMost == null || p.x > mRightMost.x){
+					mRightMost = p;
+				}
+			}
+		}
+		return mRightMost;
 	}
 
 }

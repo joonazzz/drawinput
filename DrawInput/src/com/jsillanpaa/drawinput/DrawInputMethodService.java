@@ -3,6 +3,7 @@ package com.jsillanpaa.drawinput;
 import java.util.ArrayList;
 
 import android.inputmethodservice.InputMethodService;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnLongClickListener;
@@ -120,8 +121,8 @@ public class DrawInputMethodService extends InputMethodService {
 	private void initInputMode(EditorInfo info) {
 		mValidInputModes = new ArrayList<InputMode>();
 		
-		switch (info.inputType & EditorInfo.TYPE_MASK_CLASS) {
-		case EditorInfo.TYPE_CLASS_TEXT:
+		switch (info.inputType & InputType.TYPE_MASK_CLASS) {
+		case InputType.TYPE_CLASS_TEXT:
 			mValidInputModes.add(InputMode.SMALL_LETTERS);
 			mValidInputModes.add(InputMode.BIG_LETTERS);
 			mValidInputModes.add(InputMode.NUMBERS);
@@ -129,9 +130,9 @@ public class DrawInputMethodService extends InputMethodService {
 			setInputMode(InputMode.NUMBERS);
 
 			break;
-		case EditorInfo.TYPE_CLASS_DATETIME:
-		case EditorInfo.TYPE_CLASS_NUMBER:
-		case EditorInfo.TYPE_CLASS_PHONE:
+		case InputType.TYPE_CLASS_DATETIME:
+		case InputType.TYPE_CLASS_NUMBER:
+		case InputType.TYPE_CLASS_PHONE:
 			mValidInputModes.add(InputMode.NUMBERS);
 			setInputMode(InputMode.NUMBERS);
 		default:

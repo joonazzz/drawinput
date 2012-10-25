@@ -12,6 +12,7 @@ public class SpecialCharLogicRecognizer extends LogicRecognizer {
 
 	private static final String TAG = "SpecialCharHwrRecognizerByLogic";
 
+	@Override
 	public CharRecognitionResult tryRecognition(HwrCharacter ch) {
 		Log.i(TAG, "tryRecognition()");
 		
@@ -21,11 +22,21 @@ public class SpecialCharLogicRecognizer extends LogicRecognizer {
 		
 		int num_strokes = ch.strokes.size();
 		switch (num_strokes) {
+			case 4: return tryFourStrokeRecognition(ch);
 			case 2: return tryTwoStrokeRecognition(ch);
 			case 1: return tryOneStrokeRecognition(ch);
 			default: return null;
 		}
 		
+	}
+
+	private CharRecognitionResult tryFourStrokeRecognition(HwrCharacter ch) {
+		Log.i(TAG, "tryFourStrokeRecognition()");
+		
+		if(isHash(ch)){
+			return new CharRecognitionResult('#');
+		}
+		return null;
 	}
 
 	private CharRecognitionResult tryOneStrokeRecognition(HwrCharacter ch) {
@@ -46,6 +57,12 @@ public class SpecialCharLogicRecognizer extends LogicRecognizer {
 		}
 		else if(isUnderScore(stroke)){
 			return new CharRecognitionResult('_');
+		}
+		else if(isForwardSlash(stroke)){
+			return new CharRecognitionResult('/');
+		}
+		else if(isBackSlash(stroke)){
+			return new CharRecognitionResult('\\');
 		}
 		
 		return null;

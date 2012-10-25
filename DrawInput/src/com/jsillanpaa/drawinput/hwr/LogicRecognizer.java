@@ -2,6 +2,7 @@ package com.jsillanpaa.drawinput.hwr;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.util.FloatMath;
 import android.util.Log;
 
 import com.jsillanpaa.drawinput.char_recognizers.CharRecognitionResult;
@@ -22,9 +23,15 @@ public abstract class LogicRecognizer {
 	private static final float HOR_VER_LINE_MIN_LENGTH = 0.13f;
 	private static final float HOR_VER_LINE_MAX_ASPECT_RATIO = 1.0f/3.0f;
 
+	private static final float DIAGONAL_LINE_MIN_X_WIDTH = HOR_VER_LINE_MIN_LENGTH;
+	
 	private static final float ALIGNED_STROKES_MAX_DIFF = 0.15f;
 	private static final float NEAR_CENTER_DIFF = 0.15f;
 	private static final float VERTICAL_LINE_K = 100.0f;
+
+	private static final float MAX_ANGLE_DIFF_DIAGONAL_K = 25.0f;
+	private static final float MAX_DIAGONAL_LINE_SCATTER = 0.15f;
+
 	
 	protected int mCanvasWidth;
 	protected int mCanvasHeight;
@@ -36,6 +43,64 @@ public abstract class LogicRecognizer {
 	public abstract CharRecognitionResult tryRecognition(HwrCharacter ch);
 	
 	
+	public boolean isHash(HwrCharacter ch){
+		if(ch.strokes.size() != 4)
+			return false;
+		
+		HwrStroke s0 = ch.strokes.get(0);
+		HwrStroke s1 = ch.strokes.get(1);
+		HwrStroke s2 = ch.strokes.get(2);
+		HwrStroke s3 = ch.strokes.get(3);
+		
+		/* This is nice code:
+		 * case1: ver, ver, hor, hor
+		 * case2: ver, hor, ver, hor
+		 * case3: ver, hor, hor, ver
+		 * case4: hor, ver, ver, hor
+		 * case5: hor, ver, hor, ver
+		 * case6: hor, hor, ver, ver*/
+		if(isVerticalLine(s0)){
+			if(isVerticalLine(s1)){
+				if(isHorizontalLine(s2) && isHorizontalLine(s3)){
+						return true; // case1
+				}
+			}
+			else if(isHorizontalLine(s1)){
+				if(isVerticalLine(s2)){
+					if(isHorizontalLine(s3)){
+						return true; // case2
+					}
+				}
+				else if(isHorizontalLine(s1)){
+					if(isVerticalLine(s3)){
+						return true; // case3
+					}
+				}
+			}
+		}
+		else if(isHorizontalLine(s0)){
+			if(isVerticalLine(s1)){
+				if(isVerticalLine(s2)){
+					if(isHorizontalLine(s3)){
+						return true; // case4
+					}
+				}
+				else if(isHorizontalLine(s2)){
+					if(isVerticalLine(s3)){
+						return true; // case5
+					}
+				}
+			}
+			else if(isHorizontalLine(s1)){
+				if(isVerticalLine(s2) && isVerticalLine(s3)){
+						return true; // case6
+				}
+			}
+			
+		}
+		
+		return false;
+	}
 	public boolean isPoint(HwrStroke stroke) {
 		RectF bbox = stroke.getRect();
 		float normalized_width = (bbox.right - bbox.left) / mCanvasWidth;
@@ -201,6 +266,64 @@ public abstract class LogicRecognizer {
 		return Math.abs(stroke1.getMeanX()-stroke2.getMeanX())/mCanvasWidth < ALIGNED_STROKES_MAX_DIFF;
 	}
 	
+	public boolean isForwardSlash(HwrStroke stroke) {
+		return isDiagonalLine(stroke, true) == 1.0f;
+	}
+	
+	public boolean isBackSlash(HwrStroke stroke) {
+		return isDiagonalLine(stroke, true) == -1.0f;
+	}
+	
+	/**
+	 * Line is considered diagonal if:
+	 * 
+	 * 0. Line is long enough in x- direction
+	 * 1. Line l1 from p0 -> p1 is about 45 degs
+	 * 2. No point is too far from l1
+	 * 
+	 * @param stroke
+	 * @return direction of diagonal line: +1 upwards, -1 downwards, 0 when neither
+	 */
+	public float isDiagonalLine(HwrStroke stroke, boolean y_grows_down) {
+		Log.i(TAG, "isDiagonalLine");
+		
+		PointF p0 = stroke.getLeftMost();
+		PointF p1 = stroke.getRightMost();
+		
+		float k = (p1.y - p0.y)/(p1.x - p0.x);
+		float A = k;
+		float B = -1.0f;
+		float C = p0.y - k*p0.x;
+		float line_width = Math.abs(p1.x - p0.x);
+		
+		/* Check that line is long enough */
+		if(line_width/mCanvasWidth < DIAGONAL_LINE_MIN_X_WIDTH){
+			return 0.0f;
+		}
+		/* Check that angle is about 45 degs */
+		float positive_angle = (float) ((180.0/Math.PI)*Math.atan(Math.abs(k)));
+		Log.i(TAG, "isDiagonalLine: angle was "+positive_angle);
+		if(Math.abs(positive_angle - 45.0) > MAX_ANGLE_DIFF_DIAGONAL_K){
+			Log.i(TAG, "isDiagonalLine: => is not diagonal line");
+			return 0.0f;
+		}
+		
+		/* Check that all points are close to this line, l1 : Ax + Bx + C = 0 */
+		float d;
+		for (PointF p : stroke.points) {
+			d = Math.abs(A*p.x + B*p.y + C) / (FloatMath.sqrt( A*A + B*B));
+			//Log.i(TAG, "isDiagonalLine: normalized d was "+d/line_width);
+			if(d/line_width > MAX_DIAGONAL_LINE_SCATTER){
+				//Log.i(TAG, "isDiagonalLine: => is not diagonal line");
+				return 0.0f;
+			}
+		}
+		
+		if(y_grows_down)
+			return k < 0.0 ? 1.0f : -1.0f;
+		else
+			return k > 0.0 ? 1.0f : -1.0f;
+	}
 	public boolean isHorizontalLine(HwrStroke stroke) {
 		RectF bbox = stroke.getRect();
 		float normalized_width = (bbox.right - bbox.left) / mCanvasWidth;

@@ -143,7 +143,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				break;
 			case SPECIAL_CHARS:
 				startTime = System.currentTimeMillis();
-				mSpecialCharsModel = loadModelFromResource(R.raw.rbf_svm_model_from_1d_more_chars_15_samples);
+				mSpecialCharsModel = loadModelFromResource(R.raw.rbf_svm_model_from_1d_12_samples);
 				mSpecialCharLogicRecognizer = new SpecialCharLogicRecognizer(mCanvasWidth, mCanvasHeight);
 				Log.i(TAG, "PROFILE: loading special chars model from text took: "
 						+ (System.currentTimeMillis() - startTime)
