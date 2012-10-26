@@ -17,6 +17,9 @@ public class HwrStroke implements Serializable {
 	private PointF mLeftMost;
 	private PointF mRightMost;
 
+	private PointF mLowest;
+	private PointF mUpmost;
+
 	public HwrStroke() {
 		points = new ArrayList<PointF>();
 	}
@@ -101,6 +104,54 @@ public class HwrStroke implements Serializable {
 			}
 		}
 		return mRightMost;
+	}
+
+	public PointF getLowest() {
+		if(mLowest == null){
+			for (PointF p : points) {
+				if(mLowest == null || p.y > mLowest.y){ // y grows down
+					mLowest = p;
+				}
+			}
+		}
+		return mLowest;
+	}
+	
+	public PointF getUpmost() {
+		if(mUpmost == null){
+			for (PointF p : points) {
+				if(mUpmost == null || p.y < mUpmost.y){ // y grows down
+					mUpmost = p;
+				}
+			}
+		}
+		return mUpmost;
+	}
+
+	public HwrStroke[] splitMiddle() {
+		HwrStroke[] strokes = new HwrStroke[2];
+		strokes[0] = new HwrStroke();
+		strokes[1] = new HwrStroke();
+		int half_points = points.size()/2;
+		for (PointF p : points) {
+			if(strokes[0].points.size() < half_points)
+				strokes[0].points.add(p);
+			else
+				strokes[1].points.add(p);
+		}
+		return strokes;
+	}
+
+	public float getHeight() {
+		PointF lowest = getLowest();
+		PointF upmost = getUpmost();
+		return lowest.y - upmost.y; // y grows down
+	}
+
+	public float getWidth() {
+		PointF leftmost = getLeftMost();
+		PointF rightmost = getRightMost();
+		return rightmost.x - leftmost.x; 
 	}
 
 }

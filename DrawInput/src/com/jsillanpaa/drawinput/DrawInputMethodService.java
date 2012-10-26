@@ -47,6 +47,8 @@ public class DrawInputMethodService extends InputMethodService {
 	private DrawInputCanvas mCanvas;
 	private DrawInputCanvasController mCanvasController;
 
+	private EditorInfo mEditorInfo;
+
 	@Override
 	public void onCreate() {
 		Log.i(TAG, TAG + ".onCreate()");
@@ -118,10 +120,10 @@ public class DrawInputMethodService extends InputMethodService {
 		});
 	}
 
-	private void initInputMode(EditorInfo info) {
+	private void initInputMode() {
 		mValidInputModes = new ArrayList<InputMode>();
 		
-		switch (info.inputType & InputType.TYPE_MASK_CLASS) {
+		switch (mEditorInfo.inputType & InputType.TYPE_MASK_CLASS) {
 		case InputType.TYPE_CLASS_TEXT:
 			mValidInputModes.add(InputMode.SMALL_LETTERS);
 			mValidInputModes.add(InputMode.BIG_LETTERS);
@@ -206,7 +208,57 @@ public class DrawInputMethodService extends InputMethodService {
 	public void onStartInputView(EditorInfo info, boolean restarting) {
 		Log.i(TAG, TAG + ".onStartInputView(), restarting = " + restarting);
 		super.onStartInputView(info, restarting);
-		initInputMode(info);
+		mEditorInfo = info;
+		initInputMode();
+		initGoButton();
+		
+	}
+
+	
+	private void initGoButton() {
+		Log.i(TAG, "initGoButton(), action = " + mEditorInfo.actionId);
+		
+		switch (mEditorInfo.imeOptions & EditorInfo.IME_MASK_ACTION) {
+
+			case EditorInfo.IME_ACTION_GO:
+				Log.i(TAG, "go button is Go!");
+				mGoButton.setEnabled(true);
+				mGoButton.setBackgroundResource(R.drawable.button_background);
+				mGoButton.setText(R.string.button_go_text);
+				break;
+				
+			case EditorInfo.IME_ACTION_SEARCH:
+				Log.i(TAG, "go button is search");
+				mGoButton.setEnabled(true);
+				mGoButton.setBackgroundResource(R.drawable.button_search_background);
+				mGoButton.setText("");
+				break;
+			case EditorInfo.IME_ACTION_NEXT:
+				Log.i(TAG, "go button is next");
+				mGoButton.setEnabled(true);
+				mGoButton.setText("Next");
+				mGoButton.setBackgroundResource(R.drawable.button_background);
+				break;
+			case EditorInfo.IME_ACTION_SEND:
+				Log.i(TAG, "go button is send");
+				mGoButton.setEnabled(true);
+				mGoButton.setText("Send");
+				mGoButton.setBackgroundResource(R.drawable.button_background);
+			
+			case EditorInfo.IME_ACTION_DONE:
+				Log.i(TAG, "go button is done");
+				mGoButton.setEnabled(true);
+				mGoButton.setText("Done");
+				mGoButton.setBackgroundResource(R.drawable.button_background);
+				break;
+			default:
+				Log.i(TAG, "go button is disabled");
+				mGoButton.setEnabled(false);
+				mGoButton.setText("--");
+				mGoButton.setBackgroundResource(R.drawable.button_background);
+	
+				break;
+		}
 	}
 
 	public void onSmallAbcClicked(View v) {
@@ -240,6 +292,9 @@ public class DrawInputMethodService extends InputMethodService {
 		Log.i(TAG, "onSpaceClicked()");
 
 		appendText(" ");
+		
+		//Log.i(TAG, "initGoButton(), action = " + getCurrentInputEditorInfo().);
+		
 	}
 
 	public void onEnterClicked(View v) {
@@ -249,6 +304,7 @@ public class DrawInputMethodService extends InputMethodService {
 
 	public void onGoClicked(View v) {
 		Log.i(TAG, "onGoClicked()");
+		getCurrentInputConnection().performEditorAction(mEditorInfo.imeOptions & EditorInfo.IME_MASK_ACTION);
 	}
 
 	public void onLeftClicked(View v) {

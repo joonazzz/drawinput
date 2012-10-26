@@ -12,5 +12,8 @@
     <string name="button_accept_nochar">--</string>
     <string name="inputmode_loading">inputmode loading…</string>
     
+    <string name="button_go_text">Go!</string>
+    
+    
     
 </resources>

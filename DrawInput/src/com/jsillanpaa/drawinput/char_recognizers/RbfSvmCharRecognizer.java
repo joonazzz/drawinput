@@ -9,11 +9,13 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.jsillanpaa.drawinput.R;
-import com.jsillanpaa.drawinput.hwr.HwrAlgorithms;
+import com.jsillanpaa.drawinput.hwr.BigLetterLogicRecognizer;
 import com.jsillanpaa.drawinput.hwr.HwrCharacter;
 import com.jsillanpaa.drawinput.hwr.HwrTools;
 import com.jsillanpaa.drawinput.hwr.InputMode;
 import com.jsillanpaa.drawinput.hwr.LogicRecognizer;
+import com.jsillanpaa.drawinput.hwr.NumberLogicRecognizer;
+import com.jsillanpaa.drawinput.hwr.SmallLetterLogicRecognizer;
 import com.jsillanpaa.drawinput.hwr.SpecialCharLogicRecognizer;
 
 public class RbfSvmCharRecognizer extends CharRecognizer {
@@ -28,9 +30,9 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 	private svm_model mSvmModel;
 
 	private LogicRecognizer mCurrenLogicRecognizer = null;
-	private LogicRecognizer mNumberLogicRecognizer = null;
-	private LogicRecognizer mBigLettersLogicRecognizer = null;
-	private LogicRecognizer mSmallLettersLogicRecognizer = null;
+	private LogicRecognizer mNumberLogicRecognizer;
+	private LogicRecognizer mBigLettersLogicRecognizer;
+	private LogicRecognizer mSmallLettersLogicRecognizer;
 	private LogicRecognizer mSpecialCharLogicRecognizer;
 
 	private AsyncTask<InputMode, Void, InputMode> mLoadingTask = null;
@@ -79,10 +81,10 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			}
 			if(result == null){
 				/* Second try recognition with rbf svm. */
-				HwrCharacter preprocessed_ch = HwrAlgorithms.preProcessChar(ch);
-				float[] feature_vec = HwrAlgorithms
-						.extractFeatures(preprocessed_ch);
-				result = HwrAlgorithms.predict(feature_vec, mSvmModel);
+//				HwrCharacter preprocessed_ch = HwrAlgorithms.preProcessChar(ch);
+//				float[] feature_vec = HwrAlgorithms
+//						.extractFeatures(preprocessed_ch);
+//				result = HwrAlgorithms.predict(feature_vec, mSvmModel);
 			}
 			return result;
 			
@@ -122,7 +124,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			case NUMBERS:
 				startTime = System.currentTimeMillis();
 				mNumberModel = loadModelFromResource(R.raw.rbf_svm_model_from_1a_15_samples);
-				
+				mNumberLogicRecognizer = new NumberLogicRecognizer(mCanvasWidth, mCanvasHeight);
 				Log.i(TAG, "PROFILE: loading number model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
@@ -133,6 +135,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				Log.i(TAG, "PROFILE: loading BIG ABC model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
+				mBigLettersLogicRecognizer = new BigLetterLogicRecognizer(mCanvasWidth, mCanvasHeight);
 				break;
 			case SMALL_LETTERS:
 				startTime = System.currentTimeMillis();
@@ -140,6 +143,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				Log.i(TAG, "PROFILE: loading small abc model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
+				mSmallLettersLogicRecognizer = new SmallLetterLogicRecognizer(mCanvasWidth, mCanvasHeight);
 				break;
 			case SPECIAL_CHARS:
 				startTime = System.currentTimeMillis();

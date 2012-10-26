@@ -110,7 +110,7 @@
                 android:layout_marginRight="@dimen/button_margin"
                 android:layout_marginTop="@dimen/button_margin"
                 android:onClick="onGoClicked"
-                android:text="Go!" />
+                />
         </LinearLayout>
     </LinearLayout>
 
