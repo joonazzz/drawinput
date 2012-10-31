@@ -19,45 +19,47 @@
 
             <com.jsillanpaa.drawinput.widgets.InputModeToggleButton
                 android:id="@+id/button_small_abc"
-                style="@style/vertical_inputmode_button_group"
+                style="@style/button_smallabc_style"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
                 android:layout_marginTop="@dimen/button_margin"
                 android:onClick="onSmallAbcClicked"
-                android:textOff="@string/button_small_abc_text"
-                android:textOn="@string/button_small_abc_text" />
+                android:textOff=""
+                android:textOn="" 
+                
+                app:state_loaded="true"
+                />
 
             <com.jsillanpaa.drawinput.widgets.InputModeToggleButton
                 android:id="@+id/button_big_abc"
-                style="@style/vertical_inputmode_button_group"
+                style="@style/button_bigabc_style"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
                 android:layout_marginTop="@dimen/button_margin"
-                android:enabled="false"
                 android:onClick="onBigAbcClicked"
-                android:textOff="@string/button_big_abc_text"
-                android:textOn="@string/button_big_abc_text" />
+                android:textOff=""
+                android:textOn="" />
 
             <com.jsillanpaa.drawinput.widgets.InputModeToggleButton
                 android:id="@+id/button_numbers"
-                style="@style/vertical_inputmode_button_group"
+                style="@style/button_numbers_style"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
                 android:layout_marginTop="@dimen/button_margin"
                 android:onClick="onNumbersClicked"
-                android:textOff="@string/button_123_text"
-                android:textOn="@string/button_123_text" />
+                android:textOff=""
+                android:textOn="" />
 
             <com.jsillanpaa.drawinput.widgets.InputModeToggleButton
                 android:id="@+id/button_special_chars"
-                style="@style/vertical_inputmode_button_group"
+                style="@style/button_specialchar_style"
                 android:layout_marginBottom="@dimen/button_margin"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
                 android:layout_marginTop="@dimen/button_margin"
                 android:onClick="onSpecialCharsClicked"
-                android:textOff="@string/button_special_chars_text"
-                android:textOn="@string/button_special_chars_text" />
+                android:textOff=""
+                android:textOn="" />
         </RadioGroup>
 
         <com.jsillanpaa.drawinput.DrawInputCanvas
@@ -102,14 +104,16 @@
                 android:onClick="onEnterClicked"
                 />
 
-            <Button
-                android:id="@+id/button_go"
-                style="@style/vertical_button_group"
+            <com.jsillanpaa.drawinput.widgets.ActionButton
+                android:id="@+id/button_action"
+                style="@style/button_action_style"
                 android:layout_marginBottom="@dimen/button_margin"
                 android:layout_marginLeft="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
                 android:layout_marginTop="@dimen/button_margin"
-                android:onClick="onGoClicked"
+                android:textStyle="bold"
+                android:textSize="10dp"
+                android:onClick="onActionClicked"
                 />
         </LinearLayout>
     </LinearLayout>

@@ -25,9 +25,6 @@
     </style>
     
 	<style name="button_inputmode_style">
-        <item name="android:textColor">@color/button_inputmode_text_color</item>
-        <item name="android:background">@drawable/button_background</item>
-        <item name="android:textStyle">bold</item>
     </style>
     
     <style name="vertical_inputmode_button_group" parent="button_inputmode_style">
@@ -35,6 +32,24 @@
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_gravity">center_vertical|center_horizontal</item>
         <item name="android:layout_weight">1.0</item>
+    </style>
+    
+    <!-- Left column buttons -->
+    
+    <style name="button_smallabc_style" parent="vertical_inputmode_button_group">
+        <item name="android:background">@drawable/button_smallabc_background</item>
+    </style>
+    
+    <style name="button_bigabc_style" parent="vertical_inputmode_button_group">
+        <item name="android:background">@drawable/button_bigabc_background</item>
+    </style>
+    
+    <style name="button_numbers_style" parent="vertical_inputmode_button_group">
+        <item name="android:background">@drawable/button_numbers_background</item>
+    </style>
+    
+    <style name="button_specialchar_style" parent="vertical_inputmode_button_group">
+        <item name="android:background">@drawable/button_specialchar_background</item>
     </style>
     
     
@@ -48,6 +63,9 @@
     </style>
     <style name="button_enter_style" parent="vertical_button_group">
         <item name="android:background">@drawable/button_enter_background</item>
+    </style>
+    <style name="button_action_style" parent="vertical_button_group">
+        <!-- <item name="android:background">@drawable/button_action_background</item> -->
     </style>
     
     

@@ -17,6 +17,7 @@ import com.jsillanpaa.drawinput.char_recognizers.CharRecognizer;
 import com.jsillanpaa.drawinput.char_recognizers.CharRecognizer.CharRecognizerListener;
 import com.jsillanpaa.drawinput.char_recognizers.RbfSvmCharRecognizer;
 import com.jsillanpaa.drawinput.hwr.InputMode;
+import com.jsillanpaa.drawinput.widgets.ActionButton;
 import com.jsillanpaa.drawinput.widgets.InputModeToggleButton;
 
 public class DrawInputMethodService extends InputMethodService {
@@ -32,7 +33,7 @@ public class DrawInputMethodService extends InputMethodService {
 	private Button mEraseButton;
 	private Button mSpaceButton;
 	private Button mEnterButton;
-	private Button mGoButton;
+	private ActionButton mActionButton;
 	private Button mLeftButton;
 	private Button mClearButton;
 	private Button mAcceptButton;
@@ -92,7 +93,7 @@ public class DrawInputMethodService extends InputMethodService {
 		mEraseButton = (Button) container.findViewById(R.id.button_erase);
 		mSpaceButton = (Button) container.findViewById(R.id.button_space);
 		mEnterButton = (Button) container.findViewById(R.id.button_enter);
-		mGoButton = (Button) container.findViewById(R.id.button_go);
+		mActionButton = (ActionButton) container.findViewById(R.id.button_action);
 
 		mLeftButton = (Button) container.findViewById(R.id.button_left);
 		mClearButton = (Button) container.findViewById(R.id.button_clear);
@@ -151,15 +152,17 @@ public class DrawInputMethodService extends InputMethodService {
 	private void updateButtonGroup(InputMode inputmode) {
 		for (int i = 0; i < mInputModeToggleButtons.size(); i++) {
 			InputModeToggleButton b = mInputModeToggleButtons.get(i);
-			b.setChecked(b.getInputMode() == inputmode);
-			if (b.getInputMode() == inputmode) {
+			if(b.getInputMode() == inputmode){
 				b.setChecked(true);
 				b.setEnabled(false);
-			} else if (mValidInputModes.contains(b.getInputMode())) {
-				// Re-enable previously pressed toggle button
-				b.setEnabled(true);
 			}
-
+			else{
+				b.setChecked(false);
+				if(mValidInputModes.contains(b.getInputMode())){
+					b.setEnabled(true);
+				}
+			}
+			
 		}
 	}
 
@@ -188,12 +191,19 @@ public class DrawInputMethodService extends InputMethodService {
 	private void cursorMove() {
 
 		InputConnection ic = getCurrentInputConnection();
-		int charsBeforeCursor = ic.getTextBeforeCursor(10, 0).length();
-		int charsAfterCursor = ic.getTextAfterCursor(10, 0).length();
+		
+		if(ic != null){
+			int charsBeforeCursor = ic.getTextBeforeCursor(10, 0).length();
+			int charsAfterCursor = ic.getTextAfterCursor(10, 0).length();
 
-		mEraseButton.setEnabled(charsBeforeCursor > 0);
-		mLeftButton.setEnabled(charsBeforeCursor > 0);
-		mRightButton.setEnabled(charsAfterCursor > 0);
+			mEraseButton.setEnabled(charsBeforeCursor > 0);
+			mLeftButton.setEnabled(charsBeforeCursor > 0);
+			mRightButton.setEnabled(charsAfterCursor > 0);	
+		}
+		else{
+			Log.i(TAG, "WARNING: input connection null @ cursorMove()");
+		}
+		
 	}
 
     /**
@@ -210,53 +220,47 @@ public class DrawInputMethodService extends InputMethodService {
 		super.onStartInputView(info, restarting);
 		mEditorInfo = info;
 		initInputMode();
-		initGoButton();
+		initActionButton();
+		initButtons();
 		
 	}
 
 	
-	private void initGoButton() {
-		Log.i(TAG, "initGoButton(), action = " + mEditorInfo.actionId);
+	private void initButtons() {
+		mEraseButton.setEnabled(false);
+		mLeftButton.setEnabled(false);
+		mRightButton.setEnabled(false);	
+	}
+
+	private void initActionButton() {
+		Log.i(TAG, "initGoButton(), action = " + (mEditorInfo.imeOptions & EditorInfo.IME_MASK_ACTION));
 		
 		switch (mEditorInfo.imeOptions & EditorInfo.IME_MASK_ACTION) {
 
 			case EditorInfo.IME_ACTION_GO:
-				Log.i(TAG, "go button is Go!");
-				mGoButton.setEnabled(true);
-				mGoButton.setBackgroundResource(R.drawable.button_background);
-				mGoButton.setText(R.string.button_go_text);
+				mActionButton.setEnabled(true);
+				mActionButton.setActionId(ActionButton.GO);
 				break;
 				
 			case EditorInfo.IME_ACTION_SEARCH:
-				Log.i(TAG, "go button is search");
-				mGoButton.setEnabled(true);
-				mGoButton.setBackgroundResource(R.drawable.button_search_background);
-				mGoButton.setText("");
+				mActionButton.setEnabled(true);
+				mActionButton.setActionId(ActionButton.SEARCH);
 				break;
 			case EditorInfo.IME_ACTION_NEXT:
-				Log.i(TAG, "go button is next");
-				mGoButton.setEnabled(true);
-				mGoButton.setText("Next");
-				mGoButton.setBackgroundResource(R.drawable.button_background);
+				mActionButton.setEnabled(true);
+				mActionButton.setActionId(ActionButton.NEXT);
 				break;
 			case EditorInfo.IME_ACTION_SEND:
-				Log.i(TAG, "go button is send");
-				mGoButton.setEnabled(true);
-				mGoButton.setText("Send");
-				mGoButton.setBackgroundResource(R.drawable.button_background);
-			
+				mActionButton.setEnabled(true);
+				mActionButton.setActionId(ActionButton.SEND);
+				break;
 			case EditorInfo.IME_ACTION_DONE:
-				Log.i(TAG, "go button is done");
-				mGoButton.setEnabled(true);
-				mGoButton.setText("Done");
-				mGoButton.setBackgroundResource(R.drawable.button_background);
+				mActionButton.setEnabled(true);
+				mActionButton.setActionId(ActionButton.DONE);
 				break;
 			default:
-				Log.i(TAG, "go button is disabled");
-				mGoButton.setEnabled(false);
-				mGoButton.setText("--");
-				mGoButton.setBackgroundResource(R.drawable.button_background);
-	
+				mActionButton.setEnabled(false);
+				mActionButton.setActionId(ActionButton.NONE);
 				break;
 		}
 	}
@@ -302,8 +306,8 @@ public class DrawInputMethodService extends InputMethodService {
 		appendText("\n");
 	}
 
-	public void onGoClicked(View v) {
-		Log.i(TAG, "onGoClicked()");
+	public void onActionClicked(View v) {
+		Log.i(TAG, "onActionClicked()");
 		getCurrentInputConnection().performEditorAction(mEditorInfo.imeOptions & EditorInfo.IME_MASK_ACTION);
 	}
 

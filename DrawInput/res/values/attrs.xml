@@ -3,5 +3,8 @@
     <declare-styleable name="InputModeToggleButton">
         <attr name="state_loaded" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="ActionButton">
+        <attr name="action_id" format="string" />
+    </declare-styleable>
     
 </resources>

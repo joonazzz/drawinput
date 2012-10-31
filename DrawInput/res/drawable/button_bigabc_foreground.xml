@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.jsillanpaa.drawinput">
+
+    <item android:state_checked="true" android:drawable="@drawable/button_bigabc_checked" />
+    <item app:state_loaded="true" android:drawable="@drawable/button_bigabc_loaded" />
+    <item android:state_enabled="true" android:drawable="@drawable/button_bigabc_enabled" />
+    <item android:drawable="@drawable/button_bigabc_default" />
+
+</selector>

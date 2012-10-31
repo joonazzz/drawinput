@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true"
-          android:drawable="@drawable/button_go_pressed_layer" />
-    <item android:state_enabled="false"
-          android:drawable="@drawable/button_go_disabled_layer" />
-    <item android:drawable="@drawable/button_go_default_layer" />
-</selector>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/button_background" />
+</layer-list>

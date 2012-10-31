@@ -6,19 +6,21 @@ import com.jsillanpaa.drawinput.hwr.InputMode;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ToggleButton;
 
 /**
- * Represents InputMode toggle buttons. Acts like normal toggle button, but
- * has extra state: STATE_LOADED. This represents if input mode has been loaded
- * to classifier memory.
+ * Represents InputMode toggle buttons. Acts like normal toggle button, but has
+ * extra state: STATE_LOADED. This represents if input mode has been loaded to
+ * classifier memory.
  * 
  * @author joonas
- *
+ * 
  */
 public class InputModeToggleButton extends ToggleButton {
 
 	private static final int[] STATE_LOADED = { R.attr.state_loaded };
+	
 	private boolean mStateLoaded = false;
 	private InputMode mInputMode;
 
@@ -38,7 +40,11 @@ public class InputModeToggleButton extends ToggleButton {
 	}
 
 	public void setStateLoaded(boolean isLoaded) {
-		mStateLoaded = isLoaded;
+		if(mStateLoaded != isLoaded){
+			mStateLoaded = isLoaded;
+			refreshDrawableState();
+		}
+		
 	}
 
 	public boolean getStateLoaded() {
@@ -53,17 +59,28 @@ public class InputModeToggleButton extends ToggleButton {
 		mInputMode = inputMode;
 	}
 
-	
 	private void init(AttributeSet attrs) {
+		
 		TypedArray a = getContext().obtainStyledAttributes(attrs,
 				R.styleable.InputModeToggleButton);
+
+		final int N = a.getIndexCount();
+		for (int i = 0; i < N; ++i) {
+			int attr = a.getIndex(i);
+			switch (attr) {
+				case R.styleable.InputModeToggleButton_state_loaded:
+					mStateLoaded = a.getBoolean(attr, false);
+					break;
+			}
+		}
 		a.recycle();
 	}
 
 	@Override
 	protected int[] onCreateDrawableState(int extraSpace) {
 		final int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
-		if (mStateLoaded) {
+		
+		if(mStateLoaded){
 			mergeDrawableStates(drawableState, STATE_LOADED);
 		}
 		return drawableState;
