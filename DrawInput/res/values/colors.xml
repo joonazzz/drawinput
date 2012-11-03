@@ -31,14 +31,16 @@
     
     <color name="button_inputmode_checked_border_color">#DE641D</color>
     
-    <color name="canvas_text_color">#C1C1C1</color>
+    
+    <color name="canvas_bg_color">#212121</color>
+    <color name="canvas_text_color">#FFA46A</color>
     <color name="canvas_circle_color">#00FF00</color>
     
     <color name="canvas_first_point_color">#00FF00</color>
-    <color name="canvas_line_color">#CCCCCC</color>
+    <color name="canvas_line_color">#FFA46A</color>
     <color name="canvas_last_point_color">#FF0000</color>
     
-    <color name="canvas_drawing_line_color">#23E0D9</color>
+    <color name="canvas_drawing_line_color">#7B9BFF</color>
     
     
 </resources>

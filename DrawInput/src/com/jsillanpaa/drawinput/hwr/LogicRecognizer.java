@@ -43,7 +43,7 @@ public abstract class LogicRecognizer {
 	private static final int CURVATURE_IGNORE_N_LAST_POINTS = 1;
 	private static final int CURVATURE_IGNORE_N_FIRST_POINTS = 1;
 
-	private static final float LINE_CURVATURE_MAX = 0;
+	private static final float LINE_CURVATURE_MAX = 1.5f;
 
 
 	protected int mCanvasWidth;
@@ -277,8 +277,12 @@ public abstract class LogicRecognizer {
 			
 			curvature = Math.abs(k2-k1);
 			
-			if(curvature < LINE_CURVATURE_MAX)
+			
+			if(curvature > LINE_CURVATURE_MAX)
 				return true;
+			
+			if (curvature > max_curvature)
+				max_curvature = curvature;
 		}
 		
 		Log.i("curvature", "max_curvature = " + max_curvature);

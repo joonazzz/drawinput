@@ -7,7 +7,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.MaskFilter;
 import android.graphics.Paint;
+import android.graphics.PathEffect;
 import android.graphics.PointF;
 import android.graphics.Typeface;
 import android.graphics.Paint.Style;
@@ -49,6 +51,9 @@ public class DrawInputCanvas extends SurfaceView {
 	private static final float ANIMATION_DOT_RADIUS = 10.0f;
 	private static final float CANVAS_INFO_TEXT_X = 40;
 	private static final float CANVAS_INFO_TEXT_Y = 40;
+	private static final float UPPER_LINE_Y = 0.20f;
+	private static final float MIDDLE_LINE_Y = 0.5f;
+	private static final float LOWER_LINE_Y = 0.80f;
 
 
 	public interface DrawInputCanvasListener {
@@ -80,6 +85,8 @@ public class DrawInputCanvas extends SurfaceView {
 	private long mExpectedRedrawTime;
 	private long mNextAnimationTime;
 	private long mPreviousExitTime;
+	private Paint mMiddleDrawingLinePaint;
+	private InputMode mInputMode;
 	
 	public DrawInputCanvas(Context context) {
 		super(context);
@@ -111,8 +118,13 @@ public class DrawInputCanvas extends SurfaceView {
 		mUpperDrawingLinePaint.setStyle(Style.STROKE);
 		mUpperDrawingLinePaint.setStrokeWidth(DRAWING_LINE_WIDTH);
 		
+		mMiddleDrawingLinePaint = new Paint(mUpperDrawingLinePaint);
+		mMiddleDrawingLinePaint.setStyle(Style.STROKE);
+		mMiddleDrawingLinePaint.setStrokeMiter(0.5f);
+		
+		//mMiddleDrawingLinePaint.
+		
 		mLowerDrawingLinePaint = new Paint(mUpperDrawingLinePaint);
-		mLowerDrawingLinePaint.setStrokeWidth(2*DRAWING_LINE_WIDTH);
 		
 		mDotPaint = new Paint(mLinePaint);
 		mDotPaint.setStyle(Style.FILL);
@@ -151,6 +163,7 @@ public class DrawInputCanvas extends SurfaceView {
 	public void draw(Canvas canvas) {
 		//Log.i(TAG, "onDraw()");
 		if (canvas != null) {
+			canvas.drawColor(getResources().getColor(R.color.canvas_bg_color));
 			
 			if(mDisplayText!=null){
 				drawText(canvas);
@@ -166,11 +179,13 @@ public class DrawInputCanvas extends SurfaceView {
 
 	private void drawChar(Canvas canvas) {
 		
+		if(mInputMode == InputMode.SPECIAL_CHARS){
+			canvas.drawLine(0, UPPER_LINE_Y*getHeight(), getWidth(), UPPER_LINE_Y*getHeight(), mUpperDrawingLinePaint);
+			canvas.drawLine(0, LOWER_LINE_Y*getHeight(), getWidth(), LOWER_LINE_Y*getHeight(), mLowerDrawingLinePaint);
+		}
 		
-		canvas.drawColor(Color.BLACK);
+		//canvas.drawLine(0, MIDDLE_LINE_Y*getHeight(), getWidth(), MIDDLE_LINE_Y*getHeight(), mMiddleDrawingLinePaint);
 		
-		canvas.drawLine(0, 0.25f*getHeight(), getWidth(), 0.25f*getHeight(), mUpperDrawingLinePaint);
-		canvas.drawLine(0, 0.75f*getHeight(), getWidth(), 0.75f*getHeight(), mLowerDrawingLinePaint);
 		
 		for (HwrStroke stroke : mCharBeingDrawn.strokes) {
 			PointF first_p = stroke.points.get(0);
@@ -192,7 +207,6 @@ public class DrawInputCanvas extends SurfaceView {
 	
 	
 	private void drawText(Canvas canvas) {
-		canvas.drawColor(Color.BLACK);
 		float h = canvas.getHeight()/2 - mTextPaint.getFontSpacing()/2;
 		canvas.drawText(mDisplayText, 10, h, mTextPaint);
 	}
@@ -218,8 +232,6 @@ public class DrawInputCanvas extends SurfaceView {
 		
 		long t_now = System.currentTimeMillis();
 		float animation_progress = (float)(t_now % ANIMATION_ROUND_TIME) / ANIMATION_ROUND_TIME;
-		
-		canvas.drawColor(Color.BLACK);
 		
 		canvas.drawText("Loading " + mLoadingInputMode, CANVAS_INFO_TEXT_X, CANVAS_INFO_TEXT_Y , mTextPaint);
 		canvas.drawText("svm model ...", CANVAS_INFO_TEXT_X, CANVAS_INFO_TEXT_Y + mTextPaint.getFontSpacing(), mTextPaint);
@@ -312,6 +324,18 @@ public class DrawInputCanvas extends SurfaceView {
 	}
 
 
+	public InputMode getInputMode() {
+		return mInputMode;
+	}
+
+	public void setInputMode(InputMode mode) {
+		if(mInputMode != mode){
+			mInputMode = mode;
+			invalidate();
+		}
+		
+	}
+
 	public void clear() {
 		Log.i(TAG, "clear()");
 		mCharBeingDrawn.strokes.clear();
@@ -344,6 +368,7 @@ public class DrawInputCanvas extends SurfaceView {
 	}
 	public void stopLoadingAnimation() {
 		mIsLoadingAnimation = false;
+		//mInputMode = mLoadingInputMode;
 		invalidate();
 	}
 

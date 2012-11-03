@@ -74,6 +74,10 @@ public abstract class CharRecognizer {
 	public void setCanvasHeight(int h) {
 		mCanvasHeight = h;
 	}
+
+	public InputMode getInputMode() {
+		return mInputMode;
+	}
 	
 	
 }

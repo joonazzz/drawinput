@@ -42,10 +42,8 @@ public class DrawInputMethodService extends InputMethodService {
 	private Button mAcceptButton;
 	private Button mRightButton;
 
-	private ProgressDialog mProgressDialog;
-
 	private ArrayList<InputModeToggleButton> mInputModeToggleButtons;
-	private ArrayList<InputModeToggleButton> mValidInputModeButtons;
+	//private ArrayList<InputModeToggleButton> mValidInputModeButtons;
 	private ArrayList<InputMode> mValidInputModes;
 
 	private CharRecognizer mCharRecognizer;
@@ -54,6 +52,8 @@ public class DrawInputMethodService extends InputMethodService {
 	private DrawInputCanvasController mCanvasController;
 
 	private EditorInfo mEditorInfo;
+
+	private InputMode mInputMode;
 
 	@Override
 	public void onCreate() {
@@ -116,14 +116,45 @@ public class DrawInputMethodService extends InputMethodService {
 		mEraseButton.setOnLongClickListener( new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
-				InputConnection ic = getCurrentInputConnection();
-				CharSequence charsBeforeCursor = ic.getTextBeforeCursor(Integer.MAX_VALUE, 0);
-				ic.deleteSurroundingText(charsBeforeCursor.length(), 0);
-				mEraseButton.setPressed(false); // weird that this has to be here
-				cursorMove();
-				return true;
+				return onEraseLongClick();
 			}
 		});
+		mLeftButton.setOnLongClickListener( new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				return onLeftLongClick();
+			}			
+		});
+		mRightButton.setOnLongClickListener( new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				return onRightLongClick();
+			}			
+		});
+	}
+
+	private boolean onEraseLongClick() {
+		InputConnection ic = getCurrentInputConnection();
+		CharSequence charsBeforeCursor = ic.getTextBeforeCursor(Integer.MAX_VALUE, 0);
+		ic.deleteSurroundingText(charsBeforeCursor.length(), 0);
+		mEraseButton.setPressed(false); // weird that this has to be here
+		cursorMove();
+		return true;
+	}
+
+	private boolean onLeftLongClick() {
+		InputConnection ic = getCurrentInputConnection();
+		ic.commitText("", Integer.MIN_VALUE);
+		cursorMove();
+		mLeftButton.setPressed(false);
+		return true;
+	}
+	private boolean onRightLongClick() {
+		InputConnection ic = getCurrentInputConnection();
+		ic.commitText("", Integer.MAX_VALUE);
+		mRightButton.setPressed(false);
+		cursorMove();
+		return true;
 	}
 
 	private void initInputMode() {
@@ -150,7 +181,9 @@ public class DrawInputMethodService extends InputMethodService {
 
 	private void setInputMode(InputMode inputmode) {
 		updateButtonGroup(inputmode);
+		mInputMode = inputmode;
 		mCharRecognizer.setInputMode(inputmode);
+		mCanvas.setInputMode(inputmode);
 	}
 
 	private void updateButtonGroup(InputMode inputmode) {
@@ -170,9 +203,9 @@ public class DrawInputMethodService extends InputMethodService {
 		}
 	}
 
-	private InputModeToggleButton getInputModeButton(InputMode mode) {
+	private InputModeToggleButton getInputModeButton() {
 		for (InputModeToggleButton b : mInputModeToggleButtons) {
-			if (b.getInputMode() == mode)
+			if (b.getInputMode() == mInputMode)
 				return b;
 		}
 		return null;
@@ -348,6 +381,23 @@ public class DrawInputMethodService extends InputMethodService {
 	}
 
 
+	private void disableValidInputModeButtons() {
+		for (InputModeToggleButton b : mInputModeToggleButtons) {
+			b.setEnabled(false);
+		}
+	}
+
+
+	private void enableValidInputModeButtons() {
+		for (InputModeToggleButton b : mInputModeToggleButtons) {
+			if( b.getInputMode() != mInputMode && mValidInputModes.contains(b.getInputMode()) ){
+				b.setEnabled(true);
+			}
+				
+		}
+	}
+
+
 	public class DrawInputCanvasController implements DrawInputCanvasListener {
 
 		@Override
@@ -397,9 +447,11 @@ public class DrawInputMethodService extends InputMethodService {
 		public void onNewInputModeLoaded(InputMode mode) {
 			Log.i(TAG, "onNewInputModeLoaded()");
 			//mCanvas.removeText();
-			getInputModeButton(mode).setStateLoaded(true);
+			InputModeToggleButton b = getInputModeButton();
+			b.setStateLoaded(true);
 			//endProgressDialog();
 			mCanvas.stopLoadingAnimation();
+			enableValidInputModeButtons();
 			
 		}
 
@@ -409,7 +461,9 @@ public class DrawInputMethodService extends InputMethodService {
 			//mCanvas.showText(mode + " "
 			//		+ getResources().getString(R.string.inputmode_loading));
 			mCanvas.startLoadingAnimation(mode);
+			disableValidInputModeButtons();
 		}
+		
 		
 
 	}
