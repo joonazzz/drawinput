@@ -69,20 +69,29 @@ public class HwrAlgorithms {
 		return preprocessed_chars;
 	}
 
+	public static HwrStroke removeDuplicates(HwrStroke stroke) {
+		
+		if(stroke.points.size() < 1)
+			return stroke;
+		
+		HwrStroke filteredStroke = new HwrStroke(stroke.points.size());
+		PointF prev = stroke.points.get(0);
+		filteredStroke.points.add(prev);
+		for (PointF p : stroke.points) {
+			if (p.x != prev.x || p.y != prev.y) {
+				filteredStroke.points.add(p);
+				prev = p;
+			}
+		}
+		return filteredStroke;
+	}
+	
 	public static HwrCharacter removeDuplicates(HwrCharacter ch) {
 
 		HwrCharacter filtered_ch = new HwrCharacter(ch.label);
 
 		for (HwrStroke stroke : ch.strokes) {
-			HwrStroke filtered_stroke = new HwrStroke();
-			PointF prev = stroke.points.get(0);
-			filtered_stroke.points.add(prev);
-			for (PointF p : stroke.points) {
-				if (p.x != prev.x || p.y != prev.y) {
-					filtered_stroke.points.add(p);
-					prev = p;
-				}
-			}
+			HwrStroke filtered_stroke = removeDuplicates(stroke); 
 			if (filtered_stroke.points.size() > 0) {
 				filtered_ch.strokes.add(filtered_stroke);
 			}
@@ -91,6 +100,67 @@ public class HwrAlgorithms {
 		return filtered_ch;
 	}
 
+	public static HwrStroke resample(HwrStroke old_stroke, int target_count) {
+		
+		HwrStroke new_stroke = new HwrStroke(target_count);
+		
+		/* First handle all special cases... */
+		if (target_count == 0) {
+			;
+		} else if (old_stroke.points.size() == 1) {
+			for (int j = 0; j < target_count; j++) {
+				new_stroke.points.add(old_stroke.points.get(0));
+			}
+		} else if (target_count == 1) {
+			PointF first = old_stroke.points.get(0);
+			PointF last = old_stroke.points
+					.get(old_stroke.points.size() - 1);
+			PointF new_point = new PointF(0.5f * first.x + 0.5f * last.x,
+					0.5f * first.y + 0.5f * last.y);
+			new_stroke.points.add(new_point);
+		} else if (target_count == 2) {
+			PointF first = old_stroke.points.get(0);
+			PointF last = old_stroke.points
+					.get(old_stroke.points.size() - 1);
+			new_stroke.points.add(first);
+			new_stroke.points.add(last);
+		}
+		/*
+		 * The "normal" case. Assumes old has at least two points, and that
+		 * target count is at least 3.
+		 */
+		else {
+			float index_step = (float) (old_stroke.points.size() - 1)
+					/ (target_count - 1);
+			for (int j = 0; j < target_count; j++) {
+				float index_now = j * index_step;
+				int lower_index = (int) index_now;
+				int upper_index = lower_index + 1;
+				float upper_weight = index_now - lower_index;
+				float lower_weight = 1.0f - upper_weight;
+
+				if (upper_index > old_stroke.points.size() - 1) {
+					upper_index = lower_index;
+					upper_weight = 0.0f;
+					lower_weight = 1.0f;
+				}
+
+				float new_x = old_stroke.points.get(lower_index).x
+						* lower_weight
+						+ old_stroke.points.get(upper_index).x
+						* upper_weight;
+				float new_y = old_stroke.points.get(lower_index).y
+						* lower_weight
+						+ old_stroke.points.get(upper_index).y
+						* upper_weight;
+				new_stroke.points.add(new PointF(new_x, new_y));
+
+			}
+		}
+		
+		return new_stroke;
+		
+	}
 	/**
 	 * Resamples strokes to TARGET_SAMPLE_COUNT.
 	 * 
@@ -167,62 +237,8 @@ public class HwrAlgorithms {
 		for (int i = 0; i < ch.strokes.size(); i++) {
 			int target_count = allocated_sample_counts[i];
 			HwrStroke old_stroke = ch.strokes.get(i);
-			HwrStroke new_stroke = new HwrStroke(target_count);
-
-			/* First handle all special cases... */
-			if (target_count == 0) {
-				continue;
-			} else if (old_stroke.points.size() == 1) {
-				for (int j = 0; j < target_count; j++) {
-					new_stroke.points.add(old_stroke.points.get(0));
-				}
-			} else if (target_count == 1) {
-				PointF first = old_stroke.points.get(0);
-				PointF last = old_stroke.points
-						.get(old_stroke.points.size() - 1);
-				PointF new_point = new PointF(0.5f * first.x + 0.5f * last.x,
-						0.5f * first.y + 0.5f * last.y);
-				new_stroke.points.add(new_point);
-			} else if (target_count == 2) {
-				PointF first = old_stroke.points.get(0);
-				PointF last = old_stroke.points
-						.get(old_stroke.points.size() - 1);
-				new_stroke.points.add(first);
-				new_stroke.points.add(last);
-			}
-			/*
-			 * The "normal" case. Assumes old has at least two points, and that
-			 * target count is at least 3.
-			 */
-			else {
-				float index_step = (float) (old_stroke.points.size() - 1)
-						/ (target_count - 1);
-				for (int j = 0; j < target_count; j++) {
-					float index_now = j * index_step;
-					int lower_index = (int) index_now;
-					int upper_index = lower_index + 1;
-					float upper_weight = index_now - lower_index;
-					float lower_weight = 1.0f - upper_weight;
-
-					if (upper_index > old_stroke.points.size() - 1) {
-						upper_index = lower_index;
-						upper_weight = 0.0f;
-						lower_weight = 1.0f;
-					}
-
-					float new_x = old_stroke.points.get(lower_index).x
-							* lower_weight
-							+ old_stroke.points.get(upper_index).x
-							* upper_weight;
-					float new_y = old_stroke.points.get(lower_index).y
-							* lower_weight
-							+ old_stroke.points.get(upper_index).y
-							* upper_weight;
-					new_stroke.points.add(new PointF(new_x, new_y));
-
-				}
-			}
-
+			HwrStroke new_stroke = resample(old_stroke, target_count);
+		
 			/* Finally add to stroke list if we got meaningful stroke. */
 			if (new_stroke.points.size() > 0)
 				new_ch.strokes.add(new_stroke);

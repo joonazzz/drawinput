@@ -3,6 +3,8 @@ package com.jsillanpaa.drawinput;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,12 +12,15 @@ import android.graphics.PointF;
 import android.graphics.Typeface;
 import android.graphics.Paint.Style;
 import android.util.AttributeSet;
+import android.util.FloatMath;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
+import android.widget.SlidingDrawer;
 
 import com.jsillanpaa.drawinput.hwr.HwrCharacter;
 import com.jsillanpaa.drawinput.hwr.HwrStroke;
+import com.jsillanpaa.drawinput.hwr.InputMode;
 
 /**
  * This class represents a canvas area where user can draw characters.
@@ -33,7 +38,17 @@ public class DrawInputCanvas extends SurfaceView {
 	private static final float END_POINT_RADIUS = 4.0f;
 	private static final float TEXT_FONTSIZE = 24;
 	private static final Typeface TEXT_TYPEFACE = Typeface.create("Serif", Typeface.ITALIC);
-
+	private static final long ANIMATION_ROUND_TIME= 4000;
+	private static final int ANIMATION_FPS = 15;
+	private static final int ANIMATION_FRAME_TIME= (int) (1.0f/ANIMATION_FPS*1000);
+	
+	private static final float ANIMATION_CIRCLE_RADIUS = 40.0f;
+	private static final int ANIMATION_N_DOTS = 3;
+	private static final float MATH_2PI = (float) (2*Math.PI);
+	private static final float ANIMATION_ANGLE_INCREMENT = MATH_2PI / ANIMATION_N_DOTS;
+	private static final float ANIMATION_DOT_RADIUS = 10.0f;
+	private static final float CANVAS_INFO_TEXT_X = 40;
+	private static final float CANVAS_INFO_TEXT_Y = 40;
 
 
 	public interface DrawInputCanvasListener {
@@ -57,6 +72,14 @@ public class DrawInputCanvas extends SurfaceView {
 	private Paint mLastPointPaint;
 	private Paint mUpperDrawingLinePaint;
 	private Paint mLowerDrawingLinePaint;
+	private InputMode mLoadingInputMode;
+	private boolean mIsLoadingAnimation;
+	private Paint mAnimationCirclePaint;
+	private Paint mAnimationDotPaint;
+	private Bitmap mDotBitmap;
+	private long mExpectedRedrawTime;
+	private long mNextAnimationTime;
+	private long mPreviousExitTime;
 	
 	public DrawInputCanvas(Context context) {
 		super(context);
@@ -79,12 +102,12 @@ public class DrawInputCanvas extends SurfaceView {
 		mCharBeingDrawn = new HwrCharacter('-');
 
 		mLinePaint = new Paint();
-		mLinePaint.setColor(Color.WHITE);
+		mLinePaint.setColor(getResources().getColor(R.color.canvas_line_color));
 		mLinePaint.setStyle(Style.STROKE);
 		mLinePaint.setStrokeWidth(LINE_WIDTH);
 
 		mUpperDrawingLinePaint = new Paint();
-		mUpperDrawingLinePaint.setColor(Color.CYAN);
+		mUpperDrawingLinePaint.setColor(getResources().getColor(R.color.canvas_drawing_line_color));
 		mUpperDrawingLinePaint.setStyle(Style.STROKE);
 		mUpperDrawingLinePaint.setStrokeWidth(DRAWING_LINE_WIDTH);
 		
@@ -95,40 +118,54 @@ public class DrawInputCanvas extends SurfaceView {
 		mDotPaint.setStyle(Style.FILL);
 		
 		mFirstPointPaint = new Paint();
-		mFirstPointPaint.setColor(Color.GREEN);
+		mFirstPointPaint.setColor(getResources().getColor(R.color.canvas_first_point_color));
 		mFirstPointPaint.setStyle(Style.FILL);
 		
 		
 		mLastPointPaint = new Paint();
-		mLastPointPaint.setColor(Color.RED);
+		mLastPointPaint.setColor(getResources().getColor(R.color.canvas_last_point_color));
 		mLastPointPaint.setStyle(Style.FILL);
 
 		
 		mTextPaint = new Paint();
-		mTextPaint.setColor(Color.GREEN);
+		mTextPaint.setColor(getResources().getColor(R.color.canvas_text_color));
 		mTextPaint.setStyle(Style.FILL);
 		mTextPaint.setStrokeWidth(1.0f);
+		mTextPaint.setSubpixelText(true);		// improves text quality
+		mTextPaint.setAntiAlias(true);			// improves text quality
 		mTextPaint.setTextSize(TEXT_FONTSIZE);
 		mTextPaint.setTypeface(TEXT_TYPEFACE);
 		setWillNotDraw(false);
+		
+		mAnimationCirclePaint = new Paint();
+		mAnimationCirclePaint.setColor(getResources().getColor(R.color.canvas_circle_color));
+		mAnimationCirclePaint.setStyle(Style.STROKE);
+		mAnimationCirclePaint.setAntiAlias(true);
+		mAnimationCirclePaint.setStrokeWidth(.5f);
+		
+		mDotBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.canvas_dot);
+		
 	}
 
 	@Override
 	public void draw(Canvas canvas) {
 		//Log.i(TAG, "onDraw()");
 		if (canvas != null) {
+			
 			if(mDisplayText!=null){
 				drawText(canvas);
+			}
+			else if(mIsLoadingAnimation){
+				drawLoadingAnimation(canvas);
 			}
 			else{
 				drawChar(canvas);
 			}
-
 		}
-
 	}
 
 	private void drawChar(Canvas canvas) {
+		
 		
 		canvas.drawColor(Color.BLACK);
 		
@@ -143,18 +180,66 @@ public class DrawInputCanvas extends SurfaceView {
 			for (int i = 1; i < stroke.points.size(); i++) {
 				PointF previous = stroke.points.get(i - 1);
 				PointF current = stroke.points.get(i);
-				canvas.drawLine(previous.x, previous.y, current.x,
-						current.y, mLinePaint);
+				//canvas.drawLine(previous.x, previous.y, current.x,
+				//		current.y, mLinePaint);
+				canvas.drawPoint(current.x, current.y, mDotPaint);
 
 			}
 			canvas.drawCircle(last_p.x, last_p.y, END_POINT_RADIUS, mLastPointPaint);
 		}
 	}
 
+	
+	
 	private void drawText(Canvas canvas) {
 		canvas.drawColor(Color.BLACK);
 		float h = canvas.getHeight()/2 - mTextPaint.getFontSpacing()/2;
 		canvas.drawText(mDisplayText, 10, h, mTextPaint);
+	}
+
+	
+	private void drawLoadingAnimation(Canvas canvas) {
+		
+		long entryTime = System.currentTimeMillis();
+		
+		if(mPreviousExitTime != 0){
+			long sleep_time = ANIMATION_FRAME_TIME - (entryTime-mPreviousExitTime);
+			if(sleep_time > 0){
+				try {
+					Log.i("animation", "sleeping for " + sleep_time + " ms");
+					Thread.sleep(sleep_time);
+				} catch (InterruptedException e) {
+					Log.i("animation", "thread interrupted!");
+					e.printStackTrace();
+				}	
+			}
+			
+		}
+		
+		long t_now = System.currentTimeMillis();
+		float animation_progress = (float)(t_now % ANIMATION_ROUND_TIME) / ANIMATION_ROUND_TIME;
+		
+		canvas.drawColor(Color.BLACK);
+		
+		canvas.drawText("Loading " + mLoadingInputMode, CANVAS_INFO_TEXT_X, CANVAS_INFO_TEXT_Y , mTextPaint);
+		canvas.drawText("svm model ...", CANVAS_INFO_TEXT_X, CANVAS_INFO_TEXT_Y + mTextPaint.getFontSpacing(), mTextPaint);
+		
+		float cx = getWidth()/2.0f;
+		float cy = getHeight()/2.0f + 30;
+		canvas.drawCircle(cx, cy, ANIMATION_CIRCLE_RADIUS, mAnimationCirclePaint);
+		
+		float angle = MATH_2PI*animation_progress;
+		float x, y;
+		float r = ANIMATION_CIRCLE_RADIUS;
+		for (int i = 0; i < ANIMATION_N_DOTS; i++) {
+			x = cx + r*FloatMath.cos(angle + i*ANIMATION_ANGLE_INCREMENT) - mDotBitmap.getWidth()/2.0f;
+			y = cy + r*FloatMath.sin(angle + i*ANIMATION_ANGLE_INCREMENT) - mDotBitmap.getWidth()/2.0f;
+			
+			canvas.drawBitmap(mDotBitmap, x, y, mAnimationDotPaint);
+		}
+
+		invalidate();		
+		mPreviousExitTime = System.currentTimeMillis();
 	}
 
 	@Override
@@ -167,6 +252,10 @@ public class DrawInputCanvas extends SurfaceView {
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent motionEvent) {
+		
+		if(mIsLoadingAnimation){
+			return true;
+		}
 
 		float event_x = motionEvent.getX();
 		float event_y = motionEvent.getY();
@@ -222,6 +311,7 @@ public class DrawInputCanvas extends SurfaceView {
 		}
 	}
 
+
 	public void clear() {
 		Log.i(TAG, "clear()");
 		mCharBeingDrawn.strokes.clear();
@@ -242,6 +332,18 @@ public class DrawInputCanvas extends SurfaceView {
 	}
 	public void removeText() {
 		mDisplayText = null;
+		invalidate();
+	}
+
+	public void startLoadingAnimation(InputMode mode) {
+		mCharBeingDrawn.strokes.clear();
+		mLoadingInputMode = mode;
+		mIsLoadingAnimation = true;
+		mPreviousExitTime = 0;
+		invalidate();
+	}
+	public void stopLoadingAnimation() {
+		mIsLoadingAnimation = false;
 		invalidate();
 	}
 

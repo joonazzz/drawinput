@@ -2,11 +2,14 @@ package com.jsillanpaa.drawinput;
 
 import java.util.ArrayList;
 
+import android.app.ProgressDialog;
 import android.inputmethodservice.InputMethodService;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnLongClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
@@ -38,6 +41,8 @@ public class DrawInputMethodService extends InputMethodService {
 	private Button mClearButton;
 	private Button mAcceptButton;
 	private Button mRightButton;
+
+	private ProgressDialog mProgressDialog;
 
 	private ArrayList<InputModeToggleButton> mInputModeToggleButtons;
 	private ArrayList<InputModeToggleButton> mValidInputModeButtons;
@@ -130,8 +135,7 @@ public class DrawInputMethodService extends InputMethodService {
 			mValidInputModes.add(InputMode.BIG_LETTERS);
 			mValidInputModes.add(InputMode.NUMBERS);
 			mValidInputModes.add(InputMode.SPECIAL_CHARS);
-			setInputMode(InputMode.NUMBERS);
-
+			setInputMode(InputMode.SMALL_LETTERS);
 			break;
 		case InputType.TYPE_CLASS_DATETIME:
 		case InputType.TYPE_CLASS_NUMBER:
@@ -289,15 +293,13 @@ public class DrawInputMethodService extends InputMethodService {
 		Log.i(TAG, "onEraseClicked()");
 
 		removeChar();
-
+		
 	}
 
 	public void onSpaceClicked(View v) {
 		Log.i(TAG, "onSpaceClicked()");
 
 		appendText(" ");
-		
-		//Log.i(TAG, "initGoButton(), action = " + getCurrentInputEditorInfo().);
 		
 	}
 
@@ -345,6 +347,7 @@ public class DrawInputMethodService extends InputMethodService {
 
 	}
 
+
 	public class DrawInputCanvasController implements DrawInputCanvasListener {
 
 		@Override
@@ -375,6 +378,7 @@ public class DrawInputMethodService extends InputMethodService {
 
 	public class CharRecognizerController implements CharRecognizerListener {
 
+
 		@Override
 		public void onNoResult() {
 			Log.i(TAG, "onNoResult()");
@@ -392,16 +396,21 @@ public class DrawInputMethodService extends InputMethodService {
 		@Override
 		public void onNewInputModeLoaded(InputMode mode) {
 			Log.i(TAG, "onNewInputModeLoaded()");
-			mCanvas.removeText();
+			//mCanvas.removeText();
 			getInputModeButton(mode).setStateLoaded(true);
+			//endProgressDialog();
+			mCanvas.stopLoadingAnimation();
+			
 		}
 
 		@Override
 		public void onNewInputModeLoading(InputMode mode) {
 			Log.i(TAG, "onNewInputModeLoading()");
-			mCanvas.showText(mode + " "
-					+ getResources().getString(R.string.inputmode_loading));
+			//mCanvas.showText(mode + " "
+			//		+ getResources().getString(R.string.inputmode_loading));
+			mCanvas.startLoadingAnimation(mode);
 		}
+		
 
 	}
 

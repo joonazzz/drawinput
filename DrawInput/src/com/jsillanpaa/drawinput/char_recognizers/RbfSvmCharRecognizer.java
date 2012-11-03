@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.jsillanpaa.drawinput.R;
 import com.jsillanpaa.drawinput.hwr.BigLetterLogicRecognizer;
+import com.jsillanpaa.drawinput.hwr.HwrAlgorithms;
 import com.jsillanpaa.drawinput.hwr.HwrCharacter;
 import com.jsillanpaa.drawinput.hwr.HwrTools;
 import com.jsillanpaa.drawinput.hwr.InputMode;
@@ -81,10 +82,10 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			}
 			if(result == null){
 				/* Second try recognition with rbf svm. */
-//				HwrCharacter preprocessed_ch = HwrAlgorithms.preProcessChar(ch);
-//				float[] feature_vec = HwrAlgorithms
-//						.extractFeatures(preprocessed_ch);
-//				result = HwrAlgorithms.predict(feature_vec, mSvmModel);
+				HwrCharacter preprocessed_ch = HwrAlgorithms.preProcessChar(ch);
+				float[] feature_vec = HwrAlgorithms
+						.extractFeatures(preprocessed_ch);
+				result = HwrAlgorithms.predict(feature_vec, mSvmModel);
 			}
 			return result;
 			
@@ -123,7 +124,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			switch (imode) {
 			case NUMBERS:
 				startTime = System.currentTimeMillis();
-				mNumberModel = loadModelFromResource(R.raw.rbf_svm_model_from_1a_15_samples);
+				mNumberModel = loadModelFromResource(R.raw.rbf_svm_model_from_1a_10_samples);
 				mNumberLogicRecognizer = new NumberLogicRecognizer(mCanvasWidth, mCanvasHeight);
 				Log.i(TAG, "PROFILE: loading number model from text took: "
 								+ (System.currentTimeMillis() - startTime)
@@ -131,7 +132,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				break;
 			case BIG_LETTERS:
 				startTime = System.currentTimeMillis();
-				mBigLettersModel = loadModelFromResource(R.raw.rbf_svm_model_from_1b_30_samples);
+				mBigLettersModel = loadModelFromResource(R.raw.rbf_svm_model_from_1b_10_samples);
 				Log.i(TAG, "PROFILE: loading BIG ABC model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
@@ -139,7 +140,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				break;
 			case SMALL_LETTERS:
 				startTime = System.currentTimeMillis();
-				mSmallLettersModel = loadModelFromResource(R.raw.rbf_svm_model_from_1c_30_samples);
+				mSmallLettersModel = loadModelFromResource(R.raw.rbf_svm_model_from_1c_10_samples);
 				Log.i(TAG, "PROFILE: loading small abc model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");

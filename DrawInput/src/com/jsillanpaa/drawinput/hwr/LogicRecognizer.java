@@ -23,6 +23,8 @@ public abstract class LogicRecognizer {
 	private static final float COMMA_HEIGHT_MAX = 0.14f;
 
 	private static final float HOR_VER_LINE_MIN_LENGTH = 0.13f;
+	private static final float HOR_LINE_MIN_LENGTH = 0.11f;
+
 	private static final float HOR_VER_LINE_MAX_ASPECT_RATIO = 1.0f / 3.0f;
 
 	private static final float DIAGONAL_LINE_MIN_X_WIDTH = HOR_VER_LINE_MIN_LENGTH;
@@ -36,6 +38,13 @@ public abstract class LogicRecognizer {
 	private static final float X_DIAGONAL_LINES_XMEAN_DIFF = 0.15f;
 
 	private static final float GOES_BEYOND_OR_IS_CLOSE_LIMIT = -0.15f;
+
+	private static final int NUM_CURVATURE_MEASUREMENT_POINTS = 10;
+	private static final int CURVATURE_IGNORE_N_LAST_POINTS = 1;
+	private static final int CURVATURE_IGNORE_N_FIRST_POINTS = 1;
+
+	private static final float LINE_CURVATURE_MAX = 0;
+
 
 	protected int mCanvasWidth;
 	protected int mCanvasHeight;
@@ -202,6 +211,11 @@ public abstract class LogicRecognizer {
 			}
 		}
 
+		/* Check that curvature is not too high*/
+		if(lineCurvatureTooHigh(stroke)){
+			return 0.0f;
+		}
+		
 		if (y_grows_down)
 			return k < 0.0 ? 1.0f : -1.0f;
 		else
@@ -213,7 +227,12 @@ public abstract class LogicRecognizer {
 		float normalized_width = (bbox.right - bbox.left) / mCanvasWidth;
 		float normalized_height = (bbox.bottom - bbox.top) / mCanvasHeight;
 		float line_aspect_ratio = normalized_height / normalized_width;
-		return normalized_width > HOR_VER_LINE_MIN_LENGTH
+		/* Check that curvature is not too high*/
+		if(lineCurvatureTooHigh(stroke)){
+			return false;
+		}
+		
+		return normalized_width > HOR_LINE_MIN_LENGTH
 				&& line_aspect_ratio < HOR_VER_LINE_MAX_ASPECT_RATIO;
 
 	}
@@ -224,8 +243,48 @@ public abstract class LogicRecognizer {
 		float normalized_width = (bbox.right - bbox.left) / mCanvasWidth;
 		float line_aspect_ratio = normalized_width / normalized_height;
 
+		if(lineCurvatureTooHigh(stroke)){
+			return false;
+		}
+		
+		
 		return normalized_height > HOR_VER_LINE_MIN_LENGTH
 				&& line_aspect_ratio < HOR_VER_LINE_MAX_ASPECT_RATIO;
+	}
+
+	public boolean lineCurvatureTooHigh(HwrStroke stroke) {
+		
+		HwrStroke noDuplicates = HwrAlgorithms.removeDuplicates(stroke);
+		HwrStroke resampled = HwrAlgorithms.resample(noDuplicates, NUM_CURVATURE_MEASUREMENT_POINTS+2+CURVATURE_IGNORE_N_FIRST_POINTS+CURVATURE_IGNORE_N_LAST_POINTS);
+		
+		
+		float x0, y0, x1, y1, x2, y2;
+		float k1, k2;
+		
+		float curvature;
+		float max_curvature = 0.0f;
+		for (int i = 0+CURVATURE_IGNORE_N_FIRST_POINTS; i < resampled.points.size()-2-CURVATURE_IGNORE_N_LAST_POINTS; i++) {
+			x0 = resampled.points.get(i).x;
+			y0 = resampled.points.get(i).y;
+			x1 = resampled.points.get(i+1).x;
+			y1 = resampled.points.get(i+1).y;
+			x2 = resampled.points.get(i+2).x;
+			y2 = resampled.points.get(i+2).y;
+			
+			k1 = (float) Math.atan2(y1-y0, x1-x0);
+			k2 = (float) Math.atan2(y2-y1, x2-x1);
+			
+			
+			curvature = Math.abs(k2-k1);
+			
+			if(curvature < LINE_CURVATURE_MAX)
+				return true;
+		}
+		
+		Log.i("curvature", "max_curvature = " + max_curvature);
+		
+		
+		return false;
 	}
 
 	public boolean isOnLowerDrawLineOrBelow(HwrStroke stroke) {
