@@ -77,8 +77,12 @@
     <style name="button_clear_style" parent="horizontal_button_group">
         <item name="android:background">@drawable/button_clear_background</item>
     </style>
+    <style name="button_accept_style" parent="horizontal_button_group">
+        <item name="android:background">@drawable/button_accept_background</item>
+    </style>
     <style name="button_right_style" parent="horizontal_button_group">
         <item name="android:background">@drawable/button_right_background</item>
     </style>
+    
 
 </resources>

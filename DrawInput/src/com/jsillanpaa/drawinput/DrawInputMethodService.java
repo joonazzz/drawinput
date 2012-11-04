@@ -27,6 +27,10 @@ public class DrawInputMethodService extends InputMethodService {
 
 	private static final String TAG = "DrawInputMethodService";
 
+	/* How many chars jumps on lon keypress. If set to infinity
+	 * crashes on long right click, for some mysterious reason. */
+	private static final int LONG_KEYPRESS_LEFT_RIGHT_STEP = 100;
+
 	private View mContainerView;
 
 	private InputModeToggleButton mSmallAbcButton;
@@ -144,14 +148,17 @@ public class DrawInputMethodService extends InputMethodService {
 
 	private boolean onLeftLongClick() {
 		InputConnection ic = getCurrentInputConnection();
-		ic.commitText("", Integer.MIN_VALUE);
+		int charsBeforeCursor = ic.getTextBeforeCursor(Integer.MAX_VALUE, 0).length();
+		ic.commitText("", -1*charsBeforeCursor);
 		cursorMove();
 		mLeftButton.setPressed(false);
 		return true;
 	}
 	private boolean onRightLongClick() {
 		InputConnection ic = getCurrentInputConnection();
-		ic.commitText("", Integer.MAX_VALUE);
+		CharSequence str_after = ic.getTextAfterCursor(LONG_KEYPRESS_LEFT_RIGHT_STEP, 0);
+		int charsAfterCursor = str_after.length();
+		ic.commitText("", charsAfterCursor+1);
 		mRightButton.setPressed(false);
 		cursorMove();
 		return true;
@@ -232,7 +239,7 @@ public class DrawInputMethodService extends InputMethodService {
 		if(ic != null){
 			int charsBeforeCursor = ic.getTextBeforeCursor(10, 0).length();
 			int charsAfterCursor = ic.getTextAfterCursor(10, 0).length();
-
+			
 			mEraseButton.setEnabled(charsBeforeCursor > 0);
 			mLeftButton.setEnabled(charsBeforeCursor > 0);
 			mRightButton.setEnabled(charsAfterCursor > 0);	
@@ -258,15 +265,7 @@ public class DrawInputMethodService extends InputMethodService {
 		mEditorInfo = info;
 		initInputMode();
 		initActionButton();
-		initButtons();
-		
-	}
-
-	
-	private void initButtons() {
-		mEraseButton.setEnabled(false);
-		mLeftButton.setEnabled(false);
-		mRightButton.setEnabled(false);	
+		cursorMove();
 	}
 
 	private void initActionButton() {
@@ -446,11 +445,9 @@ public class DrawInputMethodService extends InputMethodService {
 		@Override
 		public void onNewInputModeLoaded(InputMode mode) {
 			Log.i(TAG, "onNewInputModeLoaded()");
-			//mCanvas.removeText();
 			InputModeToggleButton b = getInputModeButton();
 			b.setStateLoaded(true);
-			//endProgressDialog();
-			mCanvas.stopLoadingAnimation();
+			mCanvas.stopInputModeLoading();
 			enableValidInputModeButtons();
 			
 		}
@@ -458,9 +455,7 @@ public class DrawInputMethodService extends InputMethodService {
 		@Override
 		public void onNewInputModeLoading(InputMode mode) {
 			Log.i(TAG, "onNewInputModeLoading()");
-			//mCanvas.showText(mode + " "
-			//		+ getResources().getString(R.string.inputmode_loading));
-			mCanvas.startLoadingAnimation(mode);
+			mCanvas.showInputModeLoading(mode);
 			disableValidInputModeButtons();
 		}
 		

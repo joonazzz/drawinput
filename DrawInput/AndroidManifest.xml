@@ -27,6 +27,12 @@
                 android:name="android.view.im"
                 android:resource="@xml/method" />
         </service>
+        
+        <activity android:name=".DrawInputPreferences" android:label="@string/preferences_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

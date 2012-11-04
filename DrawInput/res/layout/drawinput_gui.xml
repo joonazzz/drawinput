@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/com.jsillanpaa.drawinput"
     android:layout_width="fill_parent"
-    android:layout_height="245dp"
+    android:layout_height="250dp"
     android:background="@color/drawinput_gui_background"
     android:orientation="vertical" >
 
@@ -120,7 +120,7 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="45dp"
+        android:layout_height="50dp"
         android:orientation="horizontal" >
 
         <Button
@@ -145,7 +145,7 @@
 
         <Button
             android:id="@+id/button_accept"
-            style="@style/horizontal_button_group"
+            style="@style/button_accept_style"
             android:layout_marginBottom="@dimen/button_margin"
             android:layout_marginLeft="@dimen/button_margin"
             android:layout_marginTop="@dimen/button_margin"
