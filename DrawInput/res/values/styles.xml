@@ -79,6 +79,7 @@
     </style>
     <style name="button_accept_style" parent="horizontal_button_group">
         <item name="android:background">@drawable/button_accept_background</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <style name="button_right_style" parent="horizontal_button_group">
         <item name="android:background">@drawable/button_right_background</item>

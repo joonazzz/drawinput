@@ -1,8 +1,11 @@
 package com.jsillanpaa.drawinput.char_recognizers;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
+import libsvm.svm;
 import libsvm.svm_model;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -124,7 +127,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			switch (imode) {
 			case NUMBERS:
 				startTime = System.currentTimeMillis();
-				mNumberModel = loadModelFromResource(R.raw.rbf_svm_model_from_1a_10_samples);
+				mNumberModel = loadModelFromResource(R.raw.rbf_svm_model_from_1a_15_samples);
 				mNumberLogicRecognizer = new NumberLogicRecognizer(mCanvasWidth, mCanvasHeight);
 				Log.i(TAG, "PROFILE: loading number model from text took: "
 								+ (System.currentTimeMillis() - startTime)
@@ -132,7 +135,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				break;
 			case BIG_LETTERS:
 				startTime = System.currentTimeMillis();
-				mBigLettersModel = loadModelFromResource(R.raw.rbf_svm_model_from_1b_10_samples);
+				mBigLettersModel = loadModelFromResource(R.raw.rbf_svm_model_from_1b_15_samples);
 				Log.i(TAG, "PROFILE: loading BIG ABC model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
@@ -140,7 +143,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				break;
 			case SMALL_LETTERS:
 				startTime = System.currentTimeMillis();
-				mSmallLettersModel = loadModelFromResource(R.raw.rbf_svm_model_from_1c_10_samples);
+				mSmallLettersModel = loadModelFromResource(R.raw.rbf_svm_model_from_1c_15_samples);
 				Log.i(TAG, "PROFILE: loading small abc model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
@@ -148,7 +151,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				break;
 			case SPECIAL_CHARS:
 				startTime = System.currentTimeMillis();
-				mSpecialCharsModel = loadModelFromResource(R.raw.rbf_svm_model_from_1d_12_samples);
+				mSpecialCharsModel = loadModelFromResource(R.raw.rbf_svm_model_from_1d_15_samples);
 				mSpecialCharLogicRecognizer = new SpecialCharLogicRecognizer(mCanvasWidth, mCanvasHeight);
 				Log.i(TAG, "PROFILE: loading special chars model from text took: "
 						+ (System.currentTimeMillis() - startTime)
@@ -166,7 +169,8 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			svm_model retval = null;
 			try {
 				is = mContext.getResources().openRawResource(resid);
-				retval = HwrTools.loadModelFromSvmText(is);
+				retval = svm.svm_load_model( new BufferedReader( new InputStreamReader(is), 8192));
+				 
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
