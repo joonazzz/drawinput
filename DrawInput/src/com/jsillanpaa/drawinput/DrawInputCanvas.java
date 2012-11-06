@@ -101,7 +101,7 @@ public class DrawInputCanvas extends SurfaceView implements OnSharedPreferenceCh
 	}
 
 	private void init() {
-		Log.i(TAG, "init()");
+		Log.d(TAG, "init()");
 		mListeners = new ArrayList<DrawInputCanvas.DrawInputCanvasListener>();
 		mCharBeingDrawn = new HwrCharacter('-');
 
@@ -165,7 +165,7 @@ public class DrawInputCanvas extends SurfaceView implements OnSharedPreferenceCh
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		Log.i(TAG, "onSharedPreferenceChanged");
+		Log.d(TAG, "onSharedPreferenceChanged");
 		if(key.equals(DrawInputPreferences.PREF_CANVAS_CONNECT_POINTS)){
 			mConnectPoints = prefs.getBoolean(DrawInputPreferences.PREF_CANVAS_CONNECT_POINTS, true);
 			invalidate();
@@ -182,7 +182,7 @@ public class DrawInputCanvas extends SurfaceView implements OnSharedPreferenceCh
 	
 	@Override
 	public void draw(Canvas canvas) {
-		//Log.i(TAG, "onDraw()");
+		//Log.d(TAG, "onDraw()");
 		if (canvas != null) {
 			canvas.drawColor(getResources().getColor(R.color.canvas_bg_color));
 			
@@ -242,10 +242,10 @@ public class DrawInputCanvas extends SurfaceView implements OnSharedPreferenceCh
 			long sleep_time = ANIMATION_FRAME_TIME - (entryTime-mPreviousExitTime);
 			if(sleep_time > 0){
 				try {
-					Log.i("animation", "sleeping for " + sleep_time + " ms");
+					Log.d("animation", "sleeping for " + sleep_time + " ms");
 					Thread.sleep(sleep_time);
 				} catch (InterruptedException e) {
-					Log.i("animation", "thread interrupted!");
+					Log.d("animation", "thread interrupted!");
 					e.printStackTrace();
 				}	
 			}
@@ -365,7 +365,7 @@ public class DrawInputCanvas extends SurfaceView implements OnSharedPreferenceCh
 	}
 
 	public void clear() {
-		Log.i(TAG, "clear()");
+		Log.d(TAG, "clear()");
 		mCharBeingDrawn.strokes.clear();
 		invalidate();
 	}

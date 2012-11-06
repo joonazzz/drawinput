@@ -193,7 +193,7 @@ public class ActionButton extends Button {
 	}
 
 	private void init() {
-		Log.i(TAG, "ActionButton()");
+		Log.d(TAG, "ActionButton()");
 		
 		mLayers[0] = getButtonDefaultDrawable();
 		mLayers[1] = getNextDrawable();

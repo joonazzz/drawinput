@@ -26,7 +26,7 @@ public class BigLetterLogicRecognizer extends LogicRecognizer {
 
 	@Override
 	public CharRecognitionResult tryRecognition(HwrCharacter ch) {
-		Log.i(TAG, "tryRecognition()");
+		Log.d(TAG, "tryRecognition()");
 		
 		int num_strokes = ch.strokes.size();
 		switch (num_strokes) {
@@ -40,7 +40,7 @@ public class BigLetterLogicRecognizer extends LogicRecognizer {
 	}
 
 	private CharRecognitionResult tryOneStrokeRecognition(HwrCharacter ch) {
-		Log.i(TAG, "tryOneStrokeRecognition()");
+		Log.d(TAG, "tryOneStrokeRecognition()");
 		HwrStroke stroke = ch.strokes.get(0);
 		
 		if(isVerticalLine(stroke)){
@@ -52,7 +52,7 @@ public class BigLetterLogicRecognizer extends LogicRecognizer {
 
 
 	private CharRecognitionResult tryTwoStrokeRecognition(HwrCharacter ch) {
-		Log.i(TAG, "tryTwoStrokeRecognition()");
+		Log.d(TAG, "tryTwoStrokeRecognition()");
 		HwrStroke stroke1 = ch.strokes.get(0);
 		HwrStroke stroke2= ch.strokes.get(1);
 		
@@ -98,40 +98,40 @@ public class BigLetterLogicRecognizer extends LogicRecognizer {
 		HwrStroke hor1, ver1, ver2;
 		
 		if( (hor1 = popHorizontalFromStrokes(strokes)) == null){
-			Log.i(TAG, "is_h() : no horizontal stroke!");
+			Log.d(TAG, "is_h() : no horizontal stroke!");
 			return false;
 		}
 			
 		if( (ver1 = popVerticalFromStrokes(strokes)) == null){
-			Log.i(TAG, "is_h() : no vertical stroke!");
+			Log.d(TAG, "is_h() : no vertical stroke!");
 			return false;
 		}
 			
 		if( (ver2 = popVerticalFromStrokes(strokes)) == null){
-			Log.i(TAG, "is_h() : no second vertical stroke!");
+			Log.d(TAG, "is_h() : no second vertical stroke!");
 			return false;
 		}
 		
 		if(!areHorizontallyAligned(ver1, ver2)){
-			Log.i(TAG, "is_h() : ver1 and ver2 not horizontally aligned!");
+			Log.d(TAG, "is_h() : ver1 and ver2 not horizontally aligned!");
 			return false;
 		}
 			
 		/* Hor line should cross near ver1 and ver2 center point. */
 		if(Math.abs(hor1.getMeanY() - ver1.getMeanY())/ver1.getHeight() > H_HOR_VER_MEAN_Y_MAX_DIFF){
-			Log.i(TAG, "is_h() : hor line does not cross ver1, ver2 near center");
+			Log.d(TAG, "is_h() : hor line does not cross ver1, ver2 near center");
 			return false;
 		}
 			
 		
 		/* Hor should go beyond, or at least close to left bar */
 		if(!goesBeyondLeftOrAtLeastClose(hor1, getLeftMostFromStrokes(ver1, ver2))){
-			Log.i(TAG, "is_h() : hor does not go left enough");
+			Log.d(TAG, "is_h() : hor does not go left enough");
 			return false;
 		}
 		/* Hor should go beyond, or at least close to right bar */
 		if(!goesBeyondRightOrAtLeastClose(hor1, getRightMostFromStrokes(ver1, ver2))){
-			Log.i(TAG, "is_h() : hor does not go right enough");
+			Log.d(TAG, "is_h() : hor does not go right enough");
 			return false;
 		}
 		
@@ -148,22 +148,22 @@ public class BigLetterLogicRecognizer extends LogicRecognizer {
 		HwrStroke ver1, hor1, hor2;
 		
 		if( (ver1 = popVerticalFromStrokes(strokes)) == null){
-			Log.i(TAG, "is_F() : no vertical stroke!");
+			Log.d(TAG, "is_F() : no vertical stroke!");
 			return false;
 		}
 			
 		if( (hor1 = popHorizontalFromStrokes(strokes)) == null){
-			Log.i(TAG, "is_F() : no horizontal stroke!");
+			Log.d(TAG, "is_F() : no horizontal stroke!");
 			return false;
 		}
 			
 		if( (hor2 = popHorizontalFromStrokes(strokes)) == null){
-			Log.i(TAG, "is_F() : no second horizontal stroke!");
+			Log.d(TAG, "is_F() : no second horizontal stroke!");
 			return false;
 		}
 		
 		if(!areVerticallyAligned(hor1, hor2)){
-			Log.i(TAG, "is_F() : hor1 and hor2 not vertically aligned!");
+			Log.d(TAG, "is_F() : hor1 and hor2 not vertically aligned!");
 			return false;
 		}
 		
@@ -171,30 +171,30 @@ public class BigLetterLogicRecognizer extends LogicRecognizer {
 		HwrStroke lowerHor = getLowerFromStrokes(hor1, hor2);
 			
 		if(upperHor.getMeanX() < ver1.getMeanX()){
-			Log.i(TAG, "is_F() : upperHor mean x is smaller than ver1");
+			Log.d(TAG, "is_F() : upperHor mean x is smaller than ver1");
 			return false;
 		}
 		if(lowerHor.getMeanX() < ver1.getMeanX()){
-			Log.i(TAG, "is_F() : lowerHor mean x is smaller than ver1");
+			Log.d(TAG, "is_F() : lowerHor mean x is smaller than ver1");
 			return false;
 		}
 		
 		if( (Math.abs(upperHor.getMeanY() - ver1.getUpmost().y))/ver1.getHeight() > F_UPPER_HOR_Y_DIFF){
-			Log.i(TAG, "is_F() : Upper hor y is not good");
+			Log.d(TAG, "is_F() : Upper hor y is not good");
 			return false;
 		}
 		
 		if( (Math.abs(lowerHor.getMeanY() - ver1.getMeanY()))/ver1.getHeight() > F_LOWER_HOR_Y_DIFF){
-			Log.i(TAG, "is_F() : Lower hor y is not good");
+			Log.d(TAG, "is_F() : Lower hor y is not good");
 			return false;
 		}
 		
 		if(!goesBeyondLeftOrAtLeastClose(hor1, ver1)){
-			Log.i(TAG, "is_F() : hor1 is not left enough");
+			Log.d(TAG, "is_F() : hor1 is not left enough");
 			return false;
 		}
 		if(!goesBeyondLeftOrAtLeastClose(hor2, ver1)){
-			Log.i(TAG, "is_F() : hor2 is not left enough");
+			Log.d(TAG, "is_F() : hor2 is not left enough");
 			return false;
 		}
 		
@@ -210,29 +210,29 @@ public class BigLetterLogicRecognizer extends LogicRecognizer {
 		HwrStroke ver1, hor1, hor2, hor3;
 		
 		if( (ver1 = popVerticalFromStrokes(strokes)) == null){
-			Log.i(TAG, "is_F() : no vertical stroke!");
+			Log.d(TAG, "is_F() : no vertical stroke!");
 			return false;
 		}
 			
 		if( (hor1 = popHorizontalFromStrokes(strokes)) == null){
-			Log.i(TAG, "is_F() : no horizontal stroke!");
+			Log.d(TAG, "is_F() : no horizontal stroke!");
 			return false;
 		}
 		if( (hor2 = popHorizontalFromStrokes(strokes)) == null){
-			Log.i(TAG, "is_F() : no second horizontal stroke!");
+			Log.d(TAG, "is_F() : no second horizontal stroke!");
 			return false;
 		}
 		if( (hor3 = popHorizontalFromStrokes(strokes)) == null){
-			Log.i(TAG, "is_F() : no third horizontal stroke!");
+			Log.d(TAG, "is_F() : no third horizontal stroke!");
 			return false;
 		}
 		
 		if(!areVerticallyAligned(hor1, hor2)){
-			Log.i(TAG, "is_F() : hor1 and hor2 not vertically aligned!");
+			Log.d(TAG, "is_F() : hor1 and hor2 not vertically aligned!");
 			return false;
 		}
 		if(!areVerticallyAligned(hor2, hor3)){
-			Log.i(TAG, "is_F() : hor2 and hor3 not vertically aligned!");
+			Log.d(TAG, "is_F() : hor2 and hor3 not vertically aligned!");
 			return false;
 		}
 		
@@ -243,38 +243,38 @@ public class BigLetterLogicRecognizer extends LogicRecognizer {
 		HwrStroke lowerHor = getLowerFromStrokes(lowerTemp, hor3);
 			
 		if(hor1.getMeanX() < ver1.getMeanX()){
-			Log.i(TAG, "is_F() : hor1 mean x is smaller than ver1");
+			Log.d(TAG, "is_F() : hor1 mean x is smaller than ver1");
 			return false;
 		}
 		if(hor2.getMeanX() < ver1.getMeanX()){
-			Log.i(TAG, "is_F() : hor2 mean x is smaller than ver1");
+			Log.d(TAG, "is_F() : hor2 mean x is smaller than ver1");
 			return false;
 		}
 		if(hor3.getMeanX() < ver1.getMeanX()){
-			Log.i(TAG, "is_F() : hor3 mean x is smaller than ver1");
+			Log.d(TAG, "is_F() : hor3 mean x is smaller than ver1");
 			return false;
 		}
 		
 		if( (Math.abs(upperHor.getMeanY() - ver1.getUpmost().y))/ver1.getHeight() > E_UPPER_HOR_Y_DIFF){
-			Log.i(TAG, "is_F() : Upper hor y is not good");
+			Log.d(TAG, "is_F() : Upper hor y is not good");
 			return false;
 		}
 		
 		if( (Math.abs(lowerHor.getMeanY() - ver1.getLowest().y))/ver1.getHeight() > E_LOWER_HOR_Y_DIFF){
-			Log.i(TAG, "is_F() : Lower hor y is not good");
+			Log.d(TAG, "is_F() : Lower hor y is not good");
 			return false;
 		}
 		
 		if(!goesBeyondLeftOrAtLeastClose(hor1, ver1)){
-			Log.i(TAG, "is_F() : hor1 is not left enough");
+			Log.d(TAG, "is_F() : hor1 is not left enough");
 			return false;
 		}
 		if(!goesBeyondLeftOrAtLeastClose(hor2, ver1)){
-			Log.i(TAG, "is_F() : hor2 is not left enough");
+			Log.d(TAG, "is_F() : hor2 is not left enough");
 			return false;
 		}
 		if(!goesBeyondLeftOrAtLeastClose(hor3, ver1)){
-			Log.i(TAG, "is_F() : hor3 is not left enough");
+			Log.d(TAG, "is_F() : hor3 is not left enough");
 			return false;
 		}
 		

@@ -61,8 +61,8 @@ public abstract class LogicRecognizer {
 		float normalized_width = (bbox.right - bbox.left) / mCanvasWidth;
 		float normalized_height = (bbox.bottom - bbox.top) / mCanvasHeight;
 
-		Log.i(TAG, "isPoint(), normalized_width = " + normalized_width);
-		Log.i(TAG, "isPoint(), normalized_height = " + normalized_height);
+		Log.d(TAG, "isPoint(), normalized_width = " + normalized_width);
+		Log.d(TAG, "isPoint(), normalized_height = " + normalized_height);
 
 		if (normalized_width < POINT_WIDTH_MAX
 				&& normalized_height < POINT_HEIGHT_MAX) {
@@ -78,7 +78,7 @@ public abstract class LogicRecognizer {
 
 	public boolean horVerCrossNearCenter(HwrStroke hor_stroke,
 			HwrStroke ver_stroke) {
-		Log.i(TAG, "horVerCrossNearCenter");
+		Log.d(TAG, "horVerCrossNearCenter");
 
 		PointF hor_p0 = hor_stroke.points.get(0);
 		PointF hor_p1 = hor_stroke.points.get(hor_stroke.points.size() - 1);
@@ -94,8 +94,8 @@ public abstract class LogicRecognizer {
 		float diff_ver_midpoint = Math.abs(ver_midpoint_y - hor_p0.y)
 				/ mCanvasHeight;
 
-		Log.i(TAG, "diff_hor_midpoint = " + diff_hor_midpoint);
-		Log.i(TAG, "diff_ver_midpoint = " + diff_ver_midpoint);
+		Log.d(TAG, "diff_hor_midpoint = " + diff_hor_midpoint);
+		Log.d(TAG, "diff_ver_midpoint = " + diff_ver_midpoint);
 
 		return diff_hor_midpoint < NEAR_CENTER_DIFF
 				&& diff_ver_midpoint < NEAR_CENTER_DIFF;
@@ -137,7 +137,7 @@ public abstract class LogicRecognizer {
 	}
 
 	public static boolean isNearCenter(float x, HwrStroke stroke) {
-		Log.i(TAG, "isNearCenter");
+		Log.d(TAG, "isNearCenter");
 
 		PointF p0 = stroke.points.get(0);
 
@@ -149,9 +149,9 @@ public abstract class LogicRecognizer {
 		float x_mid = (p1.x + p0.x) / 2.0f;
 		float diff = Math.abs(x_mid - x);
 
-		Log.i(TAG, "x = " + x);
-		Log.i(TAG, "x_mid = " + x_mid);
-		Log.i(TAG, "diff=" + diff);
+		Log.d(TAG, "x = " + x);
+		Log.d(TAG, "x_mid = " + x_mid);
+		Log.d(TAG, "diff=" + diff);
 		return Math.abs(x_mid - x) < NEAR_CENTER_DIFF;
 	}
 
@@ -175,7 +175,7 @@ public abstract class LogicRecognizer {
 	 *         neither
 	 */
 	public float isDiagonalLine(HwrStroke stroke, boolean y_grows_down) {
-		Log.i(TAG, "isDiagonalLine");
+		Log.d(TAG, "isDiagonalLine");
 
 		PointF p0 = stroke.getLeftMost();
 		PointF p1 = stroke.getRightMost();
@@ -193,9 +193,9 @@ public abstract class LogicRecognizer {
 		/* Check that angle is about 45 degs */
 		float positive_angle = (float) ((180.0 / Math.PI) * Math.atan(Math
 				.abs(k)));
-		Log.i(TAG, "isDiagonalLine: angle was " + positive_angle);
+		Log.d(TAG, "isDiagonalLine: angle was " + positive_angle);
 		if (Math.abs(positive_angle - 45.0) > MAX_ANGLE_DIFF_DIAGONAL_K) {
-			Log.i(TAG, "isDiagonalLine: => is not diagonal line");
+			Log.d(TAG, "isDiagonalLine: => is not diagonal line");
 			return 0.0f;
 		}
 
@@ -204,9 +204,9 @@ public abstract class LogicRecognizer {
 		for (PointF p : stroke.points) {
 			d = Math.abs(A * p.x + B * p.y + C)
 					/ (FloatMath.sqrt(A * A + B * B));
-			Log.i(TAG, "isDiagonalLine: normalized d was " + d / mCanvasWidth);
+			Log.d(TAG, "isDiagonalLine: normalized d was " + d / mCanvasWidth);
 			if (d / mCanvasWidth > MAX_DIAGONAL_LINE_SCATTER) {
-				Log.i(TAG, "isDiagonalLine: => is not diagonal line");
+				Log.d(TAG, "isDiagonalLine: => is not diagonal line");
 				return 0.0f;
 			}
 		}
@@ -285,7 +285,7 @@ public abstract class LogicRecognizer {
 				max_curvature = curvature;
 		}
 		
-		Log.i("curvature", "max_curvature = " + max_curvature);
+		Log.d("curvature", "max_curvature = " + max_curvature);
 		
 		
 		return false;
@@ -397,20 +397,20 @@ public abstract class LogicRecognizer {
 	}
 
 	public boolean is_t(HwrStroke stroke1, HwrStroke stroke2) {
-		Log.i(TAG, "is_t()");
+		Log.d(TAG, "is_t()");
 
 		HwrStroke ver = getLowerFromStrokes(stroke1, stroke2);
 		HwrStroke hor = getLeftMostFromStrokes(stroke1, stroke2);
 
 		if (!isVerticalLine(ver) || !isHorizontalLine(hor)) {
-			Log.i(TAG, "ver : isVerticalLine() = " + isVerticalLine(ver));
-			Log.i(TAG, "hor : isHorizontalLine() = " + isHorizontalLine(hor));
+			Log.d(TAG, "ver : isVerticalLine() = " + isVerticalLine(ver));
+			Log.d(TAG, "hor : isHorizontalLine() = " + isHorizontalLine(hor));
 			return false;
 		}
 
 		PointF crossing_point = getCrossingPointForHorAndVerStroke(hor, ver);
-		Log.i(TAG, "hor : crossing_point.y = " + crossing_point.y);
-		Log.i(TAG, "hor : ver.getMeanY() = " + ver.getMeanY());
+		Log.d(TAG, "hor : crossing_point.y = " + crossing_point.y);
+		Log.d(TAG, "hor : ver.getMeanY() = " + ver.getMeanY());
 		return crossing_point.y < ver.getMeanY()
 				//&& (crossing_point.y - ver.getUpmost().y) / mCanvasHeight > T_HOR_LINE_TOO_HIGH
 				&& goesBeyondAboveOrAtLeastClose(ver, hor)
@@ -418,7 +418,7 @@ public abstract class LogicRecognizer {
 	}
 
 	public boolean is_x(HwrStroke stroke1, HwrStroke stroke2) {
-		Log.i(TAG, "is_x()");
+		Log.d(TAG, "is_x()");
 		if (isDiagonalLine(stroke1, true) == -1.0f) {
 			if (isDiagonalLine(stroke2, true) == 1.0f) {
 				if (Math.abs(stroke1.getMeanX() - stroke2.getMeanX())
@@ -436,11 +436,11 @@ public abstract class LogicRecognizer {
 			}
 		}
 
-		Log.i(TAG, "(isDiagonalLine(stroke1, true) == -1.0f) = "
+		Log.d(TAG, "(isDiagonalLine(stroke1, true) == -1.0f) = "
 				+ (isDiagonalLine(stroke1, true)));
-		Log.i(TAG, "(isDiagonalLine(stroke2, true) == 1.0f) = "
+		Log.d(TAG, "(isDiagonalLine(stroke2, true) == 1.0f) = "
 				+ (isDiagonalLine(stroke2, true)));
-		Log.i(TAG,
+		Log.d(TAG,
 				"(Math.abs(stroke1.getMeanX() - stroke2.getMeanX())/mCanvasWidth = "
 						+ Math.abs(stroke1.getMeanX() - stroke2.getMeanX())
 						/ mCanvasWidth);

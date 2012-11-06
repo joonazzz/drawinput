@@ -19,7 +19,7 @@ public class DrawInputPreferences extends PreferenceActivity {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.i(TAG, "onCreate()");
+		Log.d(TAG, "onCreate()");
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.drawinput_preferences);
 		

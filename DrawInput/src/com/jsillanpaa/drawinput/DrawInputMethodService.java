@@ -56,7 +56,7 @@ public class DrawInputMethodService extends InputMethodService {
 
 	@Override
 	public void onCreate() {
-		Log.i(TAG, TAG + ".onCreate()");
+		Log.d(TAG, TAG + ".onCreate()");
 		super.onCreate();
 		mCharRecognizerController = new CharRecognizerController();
 		mCharRecognizer = new RbfSvmCharRecognizer(this,
@@ -66,7 +66,7 @@ public class DrawInputMethodService extends InputMethodService {
 
 	@Override
 	public View onCreateInputView() {
-		Log.i(TAG, TAG + ".onCreateInputView()");
+		Log.d(TAG, TAG + ".onCreateInputView()");
 
 		mContainerView = getLayoutInflater().inflate(R.layout.drawinput_gui,
 				null);
@@ -238,7 +238,7 @@ public class DrawInputMethodService extends InputMethodService {
 			mRightButton.setEnabled(charsAfterCursor > 0);	
 		}
 		else{
-			Log.i(TAG, "WARNING: input connection null @ cursorMove()");
+			Log.d(TAG, "WARNING: input connection null @ cursorMove()");
 		}
 		
 	}
@@ -248,12 +248,12 @@ public class DrawInputMethodService extends InputMethodService {
      * is called after creation and any configuration change.
      */
     @Override public void onInitializeInterface() {
-    	Log.i(TAG, TAG + ".onInitializeInterface()" );
+    	Log.d(TAG, TAG + ".onInitializeInterface()" );
     	
     }
 	@Override
 	public void onStartInputView(EditorInfo info, boolean restarting) {
-		Log.i(TAG, TAG + ".onStartInputView(), restarting = " + restarting);
+		Log.d(TAG, TAG + ".onStartInputView(), restarting = " + restarting);
 		super.onStartInputView(info, restarting);
 		mEditorInfo = info;
 		initInputMode();
@@ -262,7 +262,7 @@ public class DrawInputMethodService extends InputMethodService {
 	}
 
 	private void initActionButton() {
-		Log.i(TAG, "initGoButton(), action = " + (mEditorInfo.imeOptions & EditorInfo.IME_MASK_ACTION));
+		Log.d(TAG, "initGoButton(), action = " + (mEditorInfo.imeOptions & EditorInfo.IME_MASK_ACTION));
 		
 		switch (mEditorInfo.imeOptions & EditorInfo.IME_MASK_ACTION) {
 
@@ -295,58 +295,58 @@ public class DrawInputMethodService extends InputMethodService {
 	}
 
 	public void onSmallAbcClicked(View v) {
-		Log.i(TAG, "onSmallAbcClicked()");
+		Log.d(TAG, "onSmallAbcClicked()");
 		setInputMode(InputMode.SMALL_LETTERS);
 	}
 
 	public void onBigAbcClicked(View v) {
-		Log.i(TAG, "onBigAbcClicked()");
+		Log.d(TAG, "onBigAbcClicked()");
 		setInputMode(InputMode.BIG_LETTERS);
 	}
 
 	public void onNumbersClicked(View v) {
-		Log.i(TAG, "onNumbersClicked()");
+		Log.d(TAG, "onNumbersClicked()");
 		setInputMode(InputMode.NUMBERS);
 	}
 
 	public void onSpecialCharsClicked(View v) {
-		Log.i(TAG, "onSpecialCharsClicked()");
+		Log.d(TAG, "onSpecialCharsClicked()");
 		setInputMode(InputMode.SPECIAL_CHARS);
 	}
 
 	public void onEraseClicked(View v) {
-		Log.i(TAG, "onEraseClicked()");
+		Log.d(TAG, "onEraseClicked()");
 
 		removeChar();
 		
 	}
 
 	public void onSpaceClicked(View v) {
-		Log.i(TAG, "onSpaceClicked()");
+		Log.d(TAG, "onSpaceClicked()");
 
 		appendText(" ");
 		
 	}
 
 	public void onEnterClicked(View v) {
-		Log.i(TAG, "onEnterClicked()");
+		Log.d(TAG, "onEnterClicked()");
 		appendText("\n");
 	}
 
 	public void onActionClicked(View v) {
-		Log.i(TAG, "onActionClicked()");
+		Log.d(TAG, "onActionClicked()");
 		getCurrentInputConnection().performEditorAction(mEditorInfo.imeOptions & EditorInfo.IME_MASK_ACTION);
 	}
 
 	public void onLeftClicked(View v) {
-		Log.i(TAG, "onLeftClicked()");
+		Log.d(TAG, "onLeftClicked()");
 		InputConnection ic = getCurrentInputConnection();
 		ic.commitText("", -1);
 		cursorMove();
 	}
 
 	public void onClearClicked(View v) {
-		Log.i(TAG, "onClearClicked()");
+		Log.d(TAG, "onClearClicked()");
 
 		mCanvas.clear();
 		mClearButton.setEnabled(false);
@@ -355,7 +355,7 @@ public class DrawInputMethodService extends InputMethodService {
 	}
 
 	public void onAcceptClicked(View v) {
-		Log.i(TAG, "onAcceptClicked()");
+		Log.d(TAG, "onAcceptClicked()");
 
 		appendText(mAcceptButton.getText().toString());
 		mCanvas.clear();
@@ -365,7 +365,7 @@ public class DrawInputMethodService extends InputMethodService {
 	}
 
 	public void onRightClicked(View v) {
-		Log.i(TAG, "onRightClicked()");
+		Log.d(TAG, "onRightClicked()");
 		InputConnection ic = getCurrentInputConnection();
 		ic.commitText("", 2);
 		cursorMove();
@@ -423,12 +423,12 @@ public class DrawInputMethodService extends InputMethodService {
 
 		@Override
 		public void onNoResult() {
-			Log.i(TAG, "onNoResult()");
+			Log.d(TAG, "onNoResult()");
 		}
 
 		@Override
 		public void onRecognizedChar(CharRecognitionResult result) {
-			Log.i(TAG,
+			Log.d(TAG,
 					"onRecognizedChar(), result.getChar() = "
 							+ result.getChar());
 			mAcceptButton.setText("" + result.getChar());
@@ -437,7 +437,7 @@ public class DrawInputMethodService extends InputMethodService {
 
 		@Override
 		public void onNewInputModeLoaded(InputMode mode) {
-			Log.i(TAG, "onNewInputModeLoaded()");
+			Log.d(TAG, "onNewInputModeLoaded()");
 			InputModeToggleButton b = getInputModeButton();
 			b.setStateLoaded(true);
 			mCanvas.stopInputModeLoading();
@@ -447,7 +447,7 @@ public class DrawInputMethodService extends InputMethodService {
 
 		@Override
 		public void onNewInputModeLoading(InputMode mode) {
-			Log.i(TAG, "onNewInputModeLoading()");
+			Log.d(TAG, "onNewInputModeLoading()");
 			mCanvas.showInputModeLoading(mode);
 			disableValidInputModeButtons();
 		}

@@ -56,7 +56,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 
 	@Override
 	public void tryRecognition(HwrCharacter ch) {		
-		Log.i(TAG, "tryRecognition()");		
+		Log.d(TAG, "tryRecognition()");		
 		new ClassifyTask().execute( ch );
 	}
 
@@ -71,7 +71,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 
 		@Override
 		protected CharRecognitionResult doInBackground(HwrCharacter... params) {
-			Log.i(MYTAG, "doInBackground()");
+			Log.d(MYTAG, "doInBackground()");
 
 			HwrCharacter ch = params[0];
 			CharRecognitionResult result = null;
@@ -99,7 +99,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 		 */
 		@Override
 		protected void onPostExecute(CharRecognitionResult result) {
-			Log.i(MYTAG, "onPostExecute()");
+			Log.d(MYTAG, "onPostExecute()");
 			notifyRecognizedChar(result);
 		}
 	}
@@ -114,13 +114,13 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 		 */
 		@Override
 		protected InputMode doInBackground(InputMode... params) {
-			Log.i(TAG, "LoadInputModeTask.doInBackground()");
+			Log.d(TAG, "LoadInputModeTask.doInBackground()");
 			loadInputMode(params[0]);
 			return params[0];
 		}
 
 		private void loadInputMode(InputMode imode) {
-			Log.i(TAG, "loadInputMode, mode = " + imode);
+			Log.d(TAG, "loadInputMode, mode = " + imode);
 
 			long startTime;
 			switch (imode) {
@@ -128,14 +128,14 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				startTime = System.currentTimeMillis();
 				mNumberModel = loadModelFromResource(R.raw.rbf_svm_model_from_1a_15_samples);
 				mNumberLogicRecognizer = new NumberLogicRecognizer(mCanvasWidth, mCanvasHeight);
-				Log.i(TAG, "PROFILE: loading number model from text took: "
+				Log.d(TAG, "PROFILE: loading number model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
 				break;
 			case BIG_LETTERS:
 				startTime = System.currentTimeMillis();
 				mBigLettersModel = loadModelFromResource(R.raw.rbf_svm_model_from_1b_15_samples);
-				Log.i(TAG, "PROFILE: loading BIG ABC model from text took: "
+				Log.d(TAG, "PROFILE: loading BIG ABC model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
 				mBigLettersLogicRecognizer = new BigLetterLogicRecognizer(mCanvasWidth, mCanvasHeight);
@@ -143,7 +143,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			case SMALL_LETTERS:
 				startTime = System.currentTimeMillis();
 				mSmallLettersModel = loadModelFromResource(R.raw.rbf_svm_model_from_1c_15_samples);
-				Log.i(TAG, "PROFILE: loading small abc model from text took: "
+				Log.d(TAG, "PROFILE: loading small abc model from text took: "
 								+ (System.currentTimeMillis() - startTime)
 								+ " ms");
 				mSmallLettersLogicRecognizer = new SmallLetterLogicRecognizer(mCanvasWidth, mCanvasHeight);
@@ -152,7 +152,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 				startTime = System.currentTimeMillis();
 				mSpecialCharsModel = loadModelFromResource(R.raw.rbf_svm_model_from_1d_15_samples);
 				mSpecialCharLogicRecognizer = new SpecialCharLogicRecognizer(mCanvasWidth, mCanvasHeight);
-				Log.i(TAG, "PROFILE: loading special chars model from text took: "
+				Log.d(TAG, "PROFILE: loading special chars model from text took: "
 						+ (System.currentTimeMillis() - startTime)
 						+ " ms");
 				break;
@@ -184,7 +184,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 		 */
 		@Override
 		protected void onPostExecute(InputMode result) {
-			Log.i(TAG, "LoadInputModeTask.onPostExecute()");
+			Log.d(TAG, "LoadInputModeTask.onPostExecute()");
 			mLoadingTask = null;
 			notifyNewInputModeLoaded(result);
 			setInputMode(mInputMode);
@@ -194,7 +194,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 
 	@Override
 	public void setInputMode(InputMode input_mode) {
-		Log.i(TAG, "setInputMode(), mode = " + input_mode);
+		Log.d(TAG, "setInputMode(), mode = " + input_mode);
 		
 		if (checkInputModeIsLoaded(input_mode) == false) {
 			return;
@@ -228,7 +228,7 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 	 * @return true if input mode has already been loaded
 	 */
 	private boolean checkInputModeIsLoaded(InputMode input_mode) {
-		Log.i(TAG, "checkInputModeIsLoaded(), mode = " + input_mode);
+		Log.d(TAG, "checkInputModeIsLoaded(), mode = " + input_mode);
 		svm_model model = null;
 		switch (input_mode) {
 		case NUMBERS:
@@ -247,28 +247,28 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			break;
 		}
 		if (model == null) {
-			Log.i(TAG, "checkInputMode(), model == null, maybe loading it...");
+			Log.d(TAG, "checkInputMode(), model == null, maybe loading it...");
 			
 			if( mInputMode == null){ // This was no previous inputmode
-				Log.i(TAG, "checkInputMode(), no previous inputmode, loading " + input_mode);
+				Log.d(TAG, "checkInputMode(), no previous inputmode, loading " + input_mode);
 				mInputMode = input_mode;
 				notifyNewInputModeLoading(input_mode);
 				mLoadingTask = new LoadInputModeTask().execute(input_mode);
 			}
 			else if(mInputMode != input_mode){ // There as previous inputmode which was different
-				Log.i(TAG, "checkInputMode(), previous inputmode was different, loading " + input_mode);
+				Log.d(TAG, "checkInputMode(), previous inputmode was different, loading " + input_mode);
 				mInputMode = input_mode;	
 				notifyNewInputModeLoading(input_mode);
 				// If there was previous loading task, cancel it
 				if(mLoadingTask != null){
-					Log.i(TAG, "checkInputMode(), there was previous loading task, canceling it...");
+					Log.d(TAG, "checkInputMode(), there was previous loading task, canceling it...");
 					mLoadingTask.cancel(true);
 					
 				}
 				mLoadingTask = new LoadInputModeTask().execute(input_mode);
 			}
 			else{ // There was previous inputmode which was same, no need to do anything
-				Log.i(TAG, "checkInputMode(), previous inputmode was same, no action");
+				Log.d(TAG, "checkInputMode(), previous inputmode was same, no action");
 				// FIXME TODO: I should really check why
 //				android calls initialization twice. I think it is unnecessary and
 //				causes annoying code. In the first init() drawing surface is created

@@ -16,11 +16,11 @@ public class SmallLetterLogicRecognizer extends LogicRecognizer {
 
 	@Override
 	public CharRecognitionResult tryRecognition(HwrCharacter ch) {
-		Log.i(TAG, "tryRecognition()");
+		Log.d(TAG, "tryRecognition()");
 		
 		
-		Log.i(TAG, "canvasWidth= " +mCanvasWidth);
-		Log.i(TAG, "canvasHeight= " +mCanvasHeight);
+		Log.d(TAG, "canvasWidth= " +mCanvasWidth);
+		Log.d(TAG, "canvasHeight= " +mCanvasHeight);
 		
 		int num_strokes = ch.strokes.size();
 		switch (num_strokes) {
@@ -32,7 +32,7 @@ public class SmallLetterLogicRecognizer extends LogicRecognizer {
 	}
 
 	private CharRecognitionResult tryOneStrokeRecognition(HwrCharacter ch) {
-		Log.i(TAG, "tryOneStrokeRecognition()");
+		Log.d(TAG, "tryOneStrokeRecognition()");
 		HwrStroke stroke = ch.strokes.get(0);
 		
 		if(isVerticalLine(stroke)){
@@ -44,7 +44,7 @@ public class SmallLetterLogicRecognizer extends LogicRecognizer {
 
 
 	private CharRecognitionResult tryTwoStrokeRecognition(HwrCharacter ch) {
-		Log.i(TAG, "tryTwoStrokeRecognition()");
+		Log.d(TAG, "tryTwoStrokeRecognition()");
 		HwrStroke stroke1 = ch.strokes.get(0);
 		HwrStroke stroke2= ch.strokes.get(1);
 		
