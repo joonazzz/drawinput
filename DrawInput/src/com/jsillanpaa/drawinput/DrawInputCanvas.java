@@ -47,11 +47,9 @@ public class DrawInputCanvas extends SurfaceView implements OnSharedPreferenceCh
 	private static final int ANIMATION_N_DOTS = 3;
 	private static final float MATH_2PI = (float) (2*Math.PI);
 	private static final float ANIMATION_ANGLE_INCREMENT = MATH_2PI / ANIMATION_N_DOTS;
-	private static final float ANIMATION_DOT_RADIUS = 10.0f;
 	private static final float CANVAS_INFO_TEXT_X = 40;
 	private static final float CANVAS_INFO_TEXT_Y = 40;
 	private static final float UPPER_LINE_Y = 0.20f;
-	private static final float MIDDLE_LINE_Y = 0.5f;
 	private static final float LOWER_LINE_Y = 0.80f;
 
 
@@ -70,7 +68,6 @@ public class DrawInputCanvas extends SurfaceView implements OnSharedPreferenceCh
 	private ArrayList<DrawInputCanvasListener> mListeners;
 	private Paint mLinePaint;
 	private Paint mDotPaint;
-	private String mDisplayText;
 	private Paint mTextPaint;
 	private Paint mFirstPointPaint;
 	private Paint mLastPointPaint;
@@ -237,13 +234,6 @@ public class DrawInputCanvas extends SurfaceView implements OnSharedPreferenceCh
 	}
 
 	
-	
-	private void drawText(Canvas canvas) {
-		float h = canvas.getHeight()/2 - mTextPaint.getFontSpacing()/2;
-		canvas.drawText(mDisplayText, 10, h, mTextPaint);
-	}
-
-	
 	private void drawLoadingAnimation(Canvas canvas) {
 		
 		long entryTime = System.currentTimeMillis();
@@ -389,11 +379,9 @@ public class DrawInputCanvas extends SurfaceView implements OnSharedPreferenceCh
 	}
 
 	public void showText(String string) {
-		mDisplayText = string;
 		invalidate();
 	}
 	public void removeText() {
-		mDisplayText = null;
 		invalidate();
 	}
 

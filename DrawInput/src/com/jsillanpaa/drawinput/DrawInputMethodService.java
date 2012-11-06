@@ -2,14 +2,11 @@ package com.jsillanpaa.drawinput;
 
 import java.util.ArrayList;
 
-import android.app.ProgressDialog;
 import android.inputmethodservice.InputMethodService;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnLongClickListener;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
@@ -38,8 +35,6 @@ public class DrawInputMethodService extends InputMethodService {
 	private InputModeToggleButton mNumbersButton;
 	private InputModeToggleButton mSpecialCharsButton;
 	private Button mEraseButton;
-	private Button mSpaceButton;
-	private Button mEnterButton;
 	private ActionButton mActionButton;
 	private Button mLeftButton;
 	private Button mClearButton;
@@ -100,8 +95,6 @@ public class DrawInputMethodService extends InputMethodService {
 		mSpecialCharsButton.setInputMode(InputMode.SPECIAL_CHARS);
 
 		mEraseButton = (Button) container.findViewById(R.id.button_erase);
-		mSpaceButton = (Button) container.findViewById(R.id.button_space);
-		mEnterButton = (Button) container.findViewById(R.id.button_enter);
 		mActionButton = (ActionButton) container.findViewById(R.id.button_action);
 
 		mLeftButton = (Button) container.findViewById(R.id.button_left);

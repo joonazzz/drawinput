@@ -15,7 +15,6 @@ import com.jsillanpaa.drawinput.R;
 import com.jsillanpaa.drawinput.hwr.BigLetterLogicRecognizer;
 import com.jsillanpaa.drawinput.hwr.HwrAlgorithms;
 import com.jsillanpaa.drawinput.hwr.HwrCharacter;
-import com.jsillanpaa.drawinput.hwr.HwrTools;
 import com.jsillanpaa.drawinput.hwr.InputMode;
 import com.jsillanpaa.drawinput.hwr.LogicRecognizer;
 import com.jsillanpaa.drawinput.hwr.NumberLogicRecognizer;
