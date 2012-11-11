@@ -230,8 +230,10 @@ public class DrawInputMethodService extends InputMethodService {
 		InputConnection ic = getCurrentInputConnection();
 		
 		if(ic != null){
-			int charsBeforeCursor = ic.getTextBeforeCursor(10, 0).length();
-			int charsAfterCursor = ic.getTextAfterCursor(10, 0).length();
+			CharSequence text = ic.getTextBeforeCursor(10, 0);
+			int charsBeforeCursor = (text != null) ? text.length() : 0;
+			text = ic.getTextAfterCursor(10, 0);
+			int charsAfterCursor = (text != null) ? text.length() : 0;
 			
 			mEraseButton.setEnabled(charsBeforeCursor > 0);
 			mLeftButton.setEnabled(charsBeforeCursor > 0);
