@@ -40,10 +40,10 @@ public abstract class LogicRecognizer {
 	private static final float GOES_BEYOND_OR_IS_CLOSE_LIMIT = -0.15f;
 
 	private static final int NUM_CURVATURE_MEASUREMENT_POINTS = 10;
-	private static final int CURVATURE_IGNORE_N_LAST_POINTS = 1;
-	private static final int CURVATURE_IGNORE_N_FIRST_POINTS = 1;
+	private static final int CURVATURE_IGNORE_N_LAST_POINTS = 3;
+	private static final int CURVATURE_IGNORE_N_FIRST_POINTS = 3;
 
-	private static final float LINE_CURVATURE_MAX = 1.5f;
+	private static final float LINE_CURVATURE_MAX = 2.5f;
 
 
 	protected int mCanvasWidth;
@@ -222,34 +222,46 @@ public abstract class LogicRecognizer {
 			return k > 0.0 ? 1.0f : -1.0f;
 	}
 
-	public boolean isHorizontalLine(HwrStroke stroke) {
+	public boolean hasHorizontalLineAspectRatio(HwrStroke stroke){
 		RectF bbox = stroke.getRect();
 		float normalized_width = (bbox.right - bbox.left) / mCanvasWidth;
 		float normalized_height = (bbox.bottom - bbox.top) / mCanvasHeight;
 		float line_aspect_ratio = normalized_height / normalized_width;
+		return normalized_width > HOR_LINE_MIN_LENGTH
+				&& line_aspect_ratio < HOR_VER_LINE_MAX_ASPECT_RATIO;
+
+	}
+	public boolean isHorizontalLine(HwrStroke stroke) {
+		if(!hasHorizontalLineAspectRatio(stroke)){
+			return false;
+		}
 		/* Check that curvature is not too high*/
 		if(lineCurvatureTooHigh(stroke)){
 			return false;
 		}
 		
-		return normalized_width > HOR_LINE_MIN_LENGTH
-				&& line_aspect_ratio < HOR_VER_LINE_MAX_ASPECT_RATIO;
-
+		return true;
 	}
 
-	public boolean isVerticalLine(HwrStroke stroke) {
+	public boolean hasVerticalLineAspectRatio(HwrStroke stroke){
 		RectF bbox = stroke.getRect();
 		float normalized_height = (bbox.bottom - bbox.top) / mCanvasHeight;
 		float normalized_width = (bbox.right - bbox.left) / mCanvasWidth;
 		float line_aspect_ratio = normalized_width / normalized_height;
 
+		return normalized_height > HOR_VER_LINE_MIN_LENGTH
+				&& line_aspect_ratio < HOR_VER_LINE_MAX_ASPECT_RATIO;
+	}
+	public boolean isVerticalLine(HwrStroke stroke) {
+			
+		if(!hasVerticalLineAspectRatio(stroke)){
+			return false;
+		}
+
 		if(lineCurvatureTooHigh(stroke)){
 			return false;
 		}
-		
-		
-		return normalized_height > HOR_VER_LINE_MIN_LENGTH
-				&& line_aspect_ratio < HOR_VER_LINE_MAX_ASPECT_RATIO;
+		return true;
 	}
 
 	public boolean lineCurvatureTooHigh(HwrStroke stroke) {
@@ -278,14 +290,17 @@ public abstract class LogicRecognizer {
 			curvature = Math.abs(k2-k1);
 			
 			
-			if(curvature > LINE_CURVATURE_MAX)
+			if(curvature > LINE_CURVATURE_MAX){
+				Log.d("curvature", "curvature too high = " + curvature);
 				return true;
+			}
+				
 			
 			if (curvature > max_curvature)
 				max_curvature = curvature;
 		}
 		
-		Log.d("curvature", "max_curvature = " + max_curvature);
+		Log.d("curvature", "Curvature ok, max_curvature = " + max_curvature);
 		
 		
 		return false;
@@ -436,14 +451,7 @@ public abstract class LogicRecognizer {
 			}
 		}
 
-		Log.d(TAG, "(isDiagonalLine(stroke1, true) == -1.0f) = "
-				+ (isDiagonalLine(stroke1, true)));
-		Log.d(TAG, "(isDiagonalLine(stroke2, true) == 1.0f) = "
-				+ (isDiagonalLine(stroke2, true)));
-		Log.d(TAG,
-				"(Math.abs(stroke1.getMeanX() - stroke2.getMeanX())/mCanvasWidth = "
-						+ Math.abs(stroke1.getMeanX() - stroke2.getMeanX())
-						/ mCanvasWidth);
+		
 		return false;
 	}
 	
