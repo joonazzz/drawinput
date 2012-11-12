@@ -1,0 +1,53 @@
+This app was born after my Master's thesis, where I researched handwriting
+recognition algorithms. Having quite good background knowledge, I tried to
+implement a handwriting input mode for Android.
+
+
+Features:
+- Simple and easy to use
+- Supports all Enghish letters, numbers and many special characters
+  * numbers, [0-9]  
+  * small letters, [a-z]  
+  * big letters, [A-Z]  
+  * special characters:  .,:;!?()[]{}<>/\'"^-_+*=@$#%
+- Source code available at: https://github.com/joonazzz/drawinput.git
+
+
+About security:
+- User should always be cautious when installing 3rd party text input methods,
+  as they could be used for example recording all text inputs. This is why
+  Android will warn you when you enable any 3rd party text input method
+- To make user more comfortable, I want to highlight that this app does not
+  require Internet permission, and cannot upload any data back to developers.
+
+About tecnologies:
+- Simple character preprocessing
+  * duplicate point removal
+  * resampling to 12 points / char
+  * normalization of coordinates to [0,1]
+- Simple features
+  * 4 features
+    * normalized x
+    * normalized y
+    * sin(dx/dy)
+    * cos(dx/dy)
+- Two recognition strategies: by custom logic and rbf svm
+  * Custom logic
+    * some characters are easy to recognize by logic
+      * Numbers: 1
+      * Small letters: i, l, t, x
+      * Big letters: E, F, H, I, T, X
+      * Special chars: .,:;!/\-_+='"#
+    * looks for stroke count, vertical, horizontal and diagonal lines, line
+      crossings (X, T-junctions), line alignments, line width, line curvature,
+      special points, etc...
+  * RBF SVM
+    * trained with UNIPEN- database
+    * 15 training samples / char
+
+
+
+
+
+
+
