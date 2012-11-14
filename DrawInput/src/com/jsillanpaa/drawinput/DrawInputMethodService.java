@@ -71,8 +71,17 @@ public class DrawInputMethodService extends InputMethodService {
 		mContainerView = getLayoutInflater().inflate(R.layout.drawinput_gui,
 				null);
 		initReferences(mContainerView);
+		updateInputModeButtonStates();
 		return mContainerView;
 
+	}
+
+	
+	private void updateInputModeButtonStates() {
+		mSmallAbcButton.setStateLoaded(mCharRecognizer.isLoaded(InputMode.SMALL_LETTERS));
+		mBigAbcButton.setStateLoaded(mCharRecognizer.isLoaded(InputMode.BIG_LETTERS));
+		mNumbersButton.setStateLoaded(mCharRecognizer.isLoaded(InputMode.NUMBERS));
+		mSpecialCharsButton.setStateLoaded(mCharRecognizer.isLoaded(InputMode.SPECIAL_CHARS));
 	}
 
 	private void initReferences(View container) {

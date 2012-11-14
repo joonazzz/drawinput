@@ -229,33 +229,17 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 	 */
 	private boolean checkInputModeIsLoaded(InputMode input_mode) {
 		Log.d(TAG, "checkInputModeIsLoaded(), mode = " + input_mode);
-		svm_model model = null;
-		switch (input_mode) {
-		case NUMBERS:
-			model = mNumberModel;
-			break;
-		case BIG_LETTERS:
-			model = mBigLettersModel;
-			break;
-		case SMALL_LETTERS:
-			model = mSmallLettersModel;
-			break;
-		case SPECIAL_CHARS:
-			model = mSpecialCharsModel;
-			break;
-		default:
-			break;
-		}
-		if (model == null) {
+		
+		if (!isLoaded(input_mode)) {
 			Log.d(TAG, "checkInputMode(), model == null, maybe loading it...");
 			
-			if( mInputMode == null){ // This was no previous inputmode
+			if( mInputMode == null){ // There was no previous inputmode
 				Log.d(TAG, "checkInputMode(), no previous inputmode, loading " + input_mode);
 				mInputMode = input_mode;
 				notifyNewInputModeLoading(input_mode);
 				mLoadingTask = new LoadInputModeTask().execute(input_mode);
 			}
-			else if(mInputMode != input_mode){ // There as previous inputmode which was different
+			else if(mInputMode != input_mode){ // There was previous inputmode which was different
 				Log.d(TAG, "checkInputMode(), previous inputmode was different, loading " + input_mode);
 				mInputMode = input_mode;	
 				notifyNewInputModeLoading(input_mode);
@@ -284,6 +268,30 @@ public class RbfSvmCharRecognizer extends CharRecognizer {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public boolean isLoaded(InputMode input_mode) {
+		
+		svm_model model = null;
+		switch (input_mode) {
+		case NUMBERS:
+			model = mNumberModel;
+			break;
+		case BIG_LETTERS:
+			model = mBigLettersModel;
+			break;
+		case SMALL_LETTERS:
+			model = mSmallLettersModel;
+			break;
+		case SPECIAL_CHARS:
+			model = mSpecialCharsModel;
+			break;
+		default:
+			break;
+		}
+		return model != null;
+		
 	}
 
 }

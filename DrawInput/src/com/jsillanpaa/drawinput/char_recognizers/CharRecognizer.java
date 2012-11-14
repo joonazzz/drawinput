@@ -79,5 +79,6 @@ public abstract class CharRecognizer {
 		return mInputMode;
 	}
 	
+	public abstract boolean isLoaded(InputMode m);
 	
 }
