@@ -207,6 +207,9 @@ public class DrawInputMethodService extends InputMethodService {
 				if(mValidInputModes.contains(b.getInputMode())){
 					b.setEnabled(true);
 				}
+				else{
+					b.setEnabled(false);
+				}
 			}
 			
 		}
