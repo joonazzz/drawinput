@@ -1,0 +1,244 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mlt title="Anonymous Submission" version="0.7.7" root="/home/joonas" LC_NUMERIC="en_US.UTF-8">
+ <profile width="1440" display_aspect_den="9" colorspace="709" frame_rate_den="1" description="HDV 1440x1080i 25 fps" height="1080" display_aspect_num="16" frame_rate_num="25" progressive="0" sample_aspect_num="4" sample_aspect_den="3"/>
+ <producer in="0" out="500" id="black">
+  <property name="mlt_type">producer</property>
+  <property name="length">15000</property>
+  <property name="eof">pause</property>
+  <property name="resource">black</property>
+  <property name="aspect_ratio">0</property>
+  <property name="mlt_service">colour</property>
+ </producer>
+ <playlist id="black_track">
+  <entry in="0" out="4279" producer="black"/>
+ </playlist>
+ <playlist id="playlist1"/>
+ <producer in="0" out="6628" id="1_3">
+  <property name="mlt_type">producer</property>
+  <property name="length">6629</property>
+  <property name="eof">pause</property>
+  <property name="resource">Desktop/demonstrations/introduction/danosongs.com-the-living-physicist.mp3</property>
+  <property name="meta.media.nb_streams">1</property>
+  <property name="meta.media.0.stream.type">audio</property>
+  <property name="meta.media.0.codec.sample_fmt">s16</property>
+  <property name="meta.media.0.codec.sample_rate">44100</property>
+  <property name="meta.media.0.codec.channels">2</property>
+  <property name="meta.media.0.codec.name">mp3</property>
+  <property name="meta.media.0.codec.long_name">MP3 (MPEG audio layer 3)</property>
+  <property name="meta.media.0.codec.bit_rate">320031</property>
+  <property name="meta.attr.album_artist.markup">Dan-O at DanoSongs.com</property>
+  <property name="meta.attr.title.markup">The Living Physicist</property>
+  <property name="seekable">1</property>
+  <property name="audio_index">0</property>
+  <property name="video_index">-1</property>
+  <property name="mlt_service">avformat</property>
+ </producer>
+ <playlist id="playlist2">
+  <blank length="125"/>
+  <entry in="0" out="4154" producer="1_3">
+   <filter in="0" out="50" id="fadein">
+    <property name="track">0</property>
+    <property name="window">75</property>
+    <property name="max_gain">20dB</property>
+    <property name="mlt_type">filter</property>
+    <property name="mlt_service">volume</property>
+    <property name="kdenlive_id">fadein</property>
+    <property name="tag">volume</property>
+    <property name="kdenlive_ix">1</property>
+    <property name="gain">0</property>
+    <property name="end">1</property>
+   </filter>
+   <filter id="gain">
+    <property name="track">0</property>
+    <property name="window">75</property>
+    <property name="max_gain">20dB</property>
+    <property name="mlt_type">filter</property>
+    <property name="mlt_service">volume</property>
+    <property name="kdenlive_id">gain</property>
+    <property name="tag">volume</property>
+    <property name="kdenlive_ix">2</property>
+    <property name="gain">0.65</property>
+   </filter>
+   <filter in="4079" out="4154" id="fadeout">
+    <property name="track">0</property>
+    <property name="window">75</property>
+    <property name="max_gain">20dB</property>
+    <property name="mlt_type">filter</property>
+    <property name="mlt_service">volume</property>
+    <property name="kdenlive_id">fadeout</property>
+    <property name="tag">volume</property>
+    <property name="kdenlive_ix">3</property>
+    <property name="gain">1</property>
+    <property name="end">0</property>
+   </filter>
+  </entry>
+ </playlist>
+ <playlist id="playlist3"/>
+ <producer in="0" out="4154" id="4_1">
+  <property name="mlt_type">producer</property>
+  <property name="length">4155</property>
+  <property name="eof">pause</property>
+  <property name="resource">Desktop/demonstrations/introduction/new_record.ogv</property>
+  <property name="meta.media.nb_streams">3</property>
+  <property name="meta.media.1.stream.type">video</property>
+  <property name="meta.media.1.stream.frame_rate">15.000000</property>
+  <property name="meta.media.1.stream.sample_aspect_ratio">1.000000</property>
+  <property name="meta.media.1.codec.frame_rate">15.000000</property>
+  <property name="meta.media.1.codec.pix_fmt">yuv420p</property>
+  <property name="meta.media.1.codec.sample_aspect_ratio">1.000000</property>
+  <property name="meta.media.1.codec.colorspace">709</property>
+  <property name="meta.media.1.codec.name">theora</property>
+  <property name="meta.media.1.codec.long_name">Theora</property>
+  <property name="meta.media.1.codec.bit_rate">0</property>
+  <property name="meta.media.2.stream.type">audio</property>
+  <property name="meta.media.2.codec.sample_fmt">s16</property>
+  <property name="meta.media.2.codec.sample_rate">22050</property>
+  <property name="meta.media.2.codec.channels">1</property>
+  <property name="meta.media.2.codec.name">vorbis</property>
+  <property name="meta.media.2.codec.long_name">Vorbis</property>
+  <property name="meta.media.2.codec.bit_rate">89991</property>
+  <property name="seekable">1</property>
+  <property name="meta.media.sample_aspect_num">1</property>
+  <property name="meta.media.sample_aspect_den">1</property>
+  <property name="aspect_ratio">1.000000</property>
+  <property name="audio_index">2</property>
+  <property name="video_index">1</property>
+  <property name="mlt_service">avformat</property>
+  <property name="meta.media.frame_rate_num">15</property>
+  <property name="meta.media.frame_rate_den">1</property>
+  <property name="source_fps">15.000000</property>
+  <property name="meta.media.colorspace">709</property>
+  <property name="meta.media.width">960</property>
+  <property name="meta.media.height">896</property>
+  <property name="meta.media.top_field_first">0</property>
+  <property name="meta.media.progressive">1</property>
+ </producer>
+ <playlist id="playlist4">
+  <blank length="125"/>
+  <entry in="25" out="4154" producer="4_1">
+   <filter in="25" out="50" id="fade_from_black">
+    <property name="track">0</property>
+    <property name="start">0</property>
+    <property name="mlt_type">filter</property>
+    <property name="mlt_service">brightness</property>
+    <property name="kdenlive_id">fade_from_black</property>
+    <property name="tag">brightness</property>
+    <property name="kdenlive_ix">1</property>
+    <property name="end">1</property>
+   </filter>
+   <filter in="4079" out="4154" id="fade_to_black">
+    <property name="track">0</property>
+    <property name="start">1</property>
+    <property name="mlt_type">filter</property>
+    <property name="mlt_service">brightness</property>
+    <property name="kdenlive_id">fade_to_black</property>
+    <property name="tag">brightness</property>
+    <property name="kdenlive_ix">2</property>
+    <property name="end">0</property>
+   </filter>
+  </entry>
+ </playlist>
+ <producer in="0" out="124" id="2">
+  <property name="mlt_type">producer</property>
+  <property name="length">125</property>
+  <property name="eof">pause</property>
+  <property name="resource">Desktop/demonstrations/introduction/intro_image_2.png</property>
+  <property name="ttl">25</property>
+  <property name="aspect_ratio">1</property>
+  <property name="progressive">1</property>
+  <property name="mlt_service">pixbuf</property>
+ </producer>
+ <playlist id="playlist5">
+  <entry in="0" out="124" producer="2">
+   <filter in="0" out="25" id="filter0">
+    <property name="track">0</property>
+    <property name="start">0</property>
+    <property name="mlt_type">filter</property>
+    <property name="mlt_service">brightness</property>
+    <property name="kdenlive_id">fade_from_black</property>
+    <property name="tag">brightness</property>
+    <property name="kdenlive_ix">1</property>
+    <property name="end">1</property>
+   </filter>
+   <filter in="99" out="124" id="filter1">
+    <property name="track">0</property>
+    <property name="start">1</property>
+    <property name="mlt_type">filter</property>
+    <property name="mlt_service">brightness</property>
+    <property name="kdenlive_id">fade_to_black</property>
+    <property name="tag">brightness</property>
+    <property name="kdenlive_ix">2</property>
+    <property name="end">0</property>
+   </filter>
+  </entry>
+ </playlist>
+ <tractor title="Anonymous Submission" global_feed="1" in="0" out="4279" id="maintractor">
+  <property name="meta.volume">1</property>
+  <track producer="black_track"/>
+  <track hide="video" producer="playlist1"/>
+  <track hide="video" producer="playlist2"/>
+  <track producer="playlist3"/>
+  <track producer="playlist4"/>
+  <track producer="playlist5"/>
+  <transition in="0" out="0" id="transition0">
+   <property name="a_track">1</property>
+   <property name="b_track">2</property>
+   <property name="mlt_type">transition</property>
+   <property name="mlt_service">mix</property>
+   <property name="always_active">1</property>
+   <property name="combine">1</property>
+   <property name="internal_added">237</property>
+  </transition>
+  <transition in="0" out="0" id="transition1">
+   <property name="a_track">1</property>
+   <property name="b_track">3</property>
+   <property name="mlt_type">transition</property>
+   <property name="mlt_service">mix</property>
+   <property name="always_active">1</property>
+   <property name="combine">1</property>
+   <property name="internal_added">237</property>
+  </transition>
+  <transition in="0" out="0" id="transition2">
+   <property name="a_track">1</property>
+   <property name="b_track">4</property>
+   <property name="mlt_type">transition</property>
+   <property name="mlt_service">mix</property>
+   <property name="always_active">1</property>
+   <property name="combine">1</property>
+   <property name="internal_added">237</property>
+  </transition>
+  <transition in="0" out="0" id="transition3">
+   <property name="a_track">1</property>
+   <property name="b_track">5</property>
+   <property name="mlt_type">transition</property>
+   <property name="mlt_service">mix</property>
+   <property name="always_active">1</property>
+   <property name="combine">1</property>
+   <property name="internal_added">237</property>
+  </transition>
+ </tractor>
+ <kdenlivedoc profile="hdv_1080_50i" kdenliveversion="0.8.2.1" version="0.88" projectfolder="/home/joonas/kdenlive">
+  <customeffects/>
+  <documentproperties documentid="1352642432742" renderdestination="" renderrescalewidth="320" proxyextension="ts" generateproxy="0" proxyimageminsize="2000" rendertctype="0" verticalzoom="1" renderprofile="MPEG-2" renderrescaleheight="240" zonein="22" renderrescale="0" renderscanning="0" renderurl="/home/joonas/git/drawinput/DrawInput/promotion_material/videos/introduction/draw_input_introduction.mpg" rendertwopass="1" renderplay="0" position="250" proxyminsize="1000" renderstartguide="-1" zoom="3" renderratio="0" rendercategory="MPEG-2" zoneout="195" renderzone="0" renderendguide="-1" renderexportaudio="0" proxyparams="-f mpegts -acodec libmp3lame -ac 2 -ab 128k -ar 48000 -vcodec mpeg2video -g 5 -deinterlace -s 480x270 -vb 400k" enableproxy="0" generateimageproxy="0" renderguide="0" rendertcoverlay="0"/>
+  <documentnotes>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:8pt; font-weight:400; font-style:normal;">
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;br />&lt;/p>&lt;/body>&lt;/html></documentnotes>
+  <profileinfo width="1440" display_aspect_den="9" frame_rate_den="1" description="HDV 1440x1080i 25 fps" height="1080" frame_rate_num="25" display_aspect_num="16" progressive="0" sample_aspect_num="4" sample_aspect_den="3"/>
+  <tracksinfo>
+   <trackinfo blind="1" mute="0" locked="0" trackname="Audio 2" type="audio"/>
+   <trackinfo blind="1" mute="0" locked="0" trackname="Audio 1" type="audio"/>
+   <trackinfo blind="0" mute="0" locked="0" trackname="Video 3"/>
+   <trackinfo blind="0" mute="0" locked="0" trackname="Video 2"/>
+   <trackinfo blind="0" mute="0" locked="0" trackname="Video 1"/>
+  </tracksinfo>
+  <kdenlive_producer audiocodec="MP3 (MPEG audio layer 3)" channels="2" duration="6629" frame_size="1440x1080" frequency="44100" file_size="10613007" aspect_ratio="0.000000" file_hash="d545dbd2c93d09c7fba35d849f97c909" type="1" id="1" name="danosongs.com-the-living-physicist.mp3" resource="/home/joonas/Desktop/demonstrations/introduction/danosongs.com-the-living-physicist.mp3"/>
+  <kdenlive_producer audio_max="0" channels="0" duration="125" default_audio="0" video_max="0" frame_size="640x480" frequency="0" in="0" file_size="29423" aspect_ratio="1.000000" out="125" file_hash="62b32f74600c494b994ec0a8563d670e" type="5" id="2" name="intro_image_2.png" default_video="0" resource="/home/joonas/Desktop/demonstrations/introduction/intro_image_2.png"/>
+  <kdenlive_producer audio_max="2" id="4" pix_fmt="yuv420p" default_video="1" fps="15.000000" name="introduction.ogv" colorspace="709" videocodec="Theora" resource="/home/joonas/Desktop/demonstrations/introduction/new_record.ogv" default_audio="2" audiocodec="Vorbis" duration="4155" file_hash="afee173163d68516c3ae5321e092454f" aspect_ratio="1.000000" channels="1" frequency="22050" video_max="1" type="3" frame_size="960x896" file_size="7618725"/>
+  <markers>
+   <marker comment="Marker" id="4" time="1"/>
+  </markers>
+  <groups/>
+ </kdenlivedoc>
+</mlt>
