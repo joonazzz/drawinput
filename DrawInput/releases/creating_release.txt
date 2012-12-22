@@ -1,6 +1,8 @@
 Creating Drawinput release
 ==========================
 
+-1. Update AndroidManifest.xml for version code an number
+
 0. Create new folder in releases/xxx.xxx
 
 1. Create signed APK to this folder
