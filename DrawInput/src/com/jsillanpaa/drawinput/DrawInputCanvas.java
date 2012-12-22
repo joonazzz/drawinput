@@ -326,9 +326,16 @@ public class DrawInputCanvas extends SurfaceView implements OnSharedPreferenceCh
 			// from: http://developer.android.com/reference/android/view/MotionEvent.html
 			
 			final int historySize = motionEvent.getHistorySize();
-			for (int h = 0; h < historySize	; h++) {
-				mStrokeBeingDrawn.points.add(new PointF(motionEvent.getHistoricalX(h), motionEvent.getHistoricalY(h)));
-			}	
+			if(historySize > 0){
+				Log.e(TAG, "historySize = " + historySize);
+				for (int h = 0; h < historySize	; h++) {
+					mStrokeBeingDrawn.points.add(new PointF(motionEvent.getHistoricalX(h), motionEvent.getHistoricalY(h)));
+				}
+			}
+			else{
+				mStrokeBeingDrawn.points.add(new PointF(event_x, event_y));
+			}
+				
 			invalidate();
 			break;
 
