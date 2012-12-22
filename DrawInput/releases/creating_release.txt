@@ -1,0 +1,10 @@
+Creating Drawinput release
+==========================
+
+0. Create new folder in releases/xxx.xxx
+
+1. Create signed APK to this folder
+- File -> Export -> Android/Export Android application
+
+2. Copy /proguard/*.txt to this folder
+
